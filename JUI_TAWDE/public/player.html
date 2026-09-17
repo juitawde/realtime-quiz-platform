@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Player — Quiz Arena</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+  <script>
+    if (sessionStorage.getItem("quizFinished") === "true") {
+      sessionStorage.removeItem("quizFinished");
+      window.location.href = "/";
+    }
+  </script>
+  <header class="topbar"><a href="/" class="logo">✦ QUIZ ARENA</a><span id="playerStatus"
+      class="role-pill">PLAYER</span></header>
+  <main class="player-main">
+    <section id="joinView" class="panel join-card">
+      <p class="eyebrow">JOIN THE BATTLE</p>
+      <h1>Ready?</h1>
+      <p class="muted">Enter the PIN shown on the host screen.</p>
+      <label>Room PIN<input id="pinInput" inputmode="numeric" maxlength="4" placeholder="0000"></label>
+      <label>Your name<input id="nameInput" maxlength="20" placeholder="e.g. Jui"></label>
+      <button id="joinBtn" class="primary">Join Quiz →</button>
+      <p id="joinMsg" class="msg"></p>
+    </section>
+    <section id="waitView" class="hidden panel wait-card">
+      <div class="pulse-dot"></div>
+      <p class="eyebrow">YOU'RE IN</p>
+      <h1 id="welcomeName"></h1>
+      <p class="muted">Waiting for the host to start the battle…</p>
+      <div id="waitPlayers"></div>
+    </section>
+    <section id="playView" class="hidden">
+      <div class="play-head"><span id="qNumber" class="eyebrow">QUESTION 1 / 5</span>
+        <div id="timer" class="big-timer">15</div>
+        <div class="score-chip">Score <b id="myScore">0</b></div>
+      </div>
+      <div class="question-card">
+        <h1 id="question"></h1>
+        <div id="answerGrid" class="answer-grid"></div>
+      </div>
+      <div id="answerMsg" class="answer-msg"></div>
+      <div class="panel mini-board">
+        <div class="section-title">
+          <h3>Live standings</h3>
+        </div>
+        <div id="playerLeaderboard"></div>
+      </div>
+    </section>
+    <section id="endView" class="hidden panel end-card">
+      <div class="trophy">♛</div>
+      <p class="eyebrow">FINAL RESULTS</p>
+      <h1 id="playerWinner"></h1>
+      <div id="playerFinalRanks"></div><a class="secondary" href="/player.html">Play Again</a>
+    </section>
+  </main>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/app.js"></script>
+  <script>QuizApp.initPlayer();</script>
+</body>
+
+</html>

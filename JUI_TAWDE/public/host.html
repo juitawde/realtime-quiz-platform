@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Host — Quiz Arena</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+  <script>
+    if (sessionStorage.getItem("quizFinished") === "true") {
+      sessionStorage.removeItem("quizFinished");
+      window.location.href = "/";
+    }
+  </script>
+  <header class="topbar"><a href="/" class="logo">✦ QUIZ ARENA</a><span class="role-pill">HOST DASHBOARD</span></header>
+  <main class="dashboard">
+    <section id="createView" class="panel narrow">
+      <p class="eyebrow">SET UP YOUR BATTLE</p>
+      <h1>Create Quiz Room</h1>
+      <p class="muted">Invite players with a four-digit room PIN.</p>
+      <label>Host name<input id="hostName" value="Quiz Host" maxlength="20"></label>
+      <label>Category<select id="category">
+          <option>Tech</option>
+          <option>General Knowledge</option>
+          <option>Web Development</option>
+          <option>Mixed</option>
+        </select></label>
+      <button id="createBtn" class="primary">Create Quiz Room →</button>
+      <p id="createMsg" class="msg"></p>
+    </section>
+    <section id="lobbyView" class="hidden">
+      <div class="room-head">
+        <div>
+          <p class="eyebrow">ROOM PIN</p>
+          <div id="pin" class="pin">----</div>
+          <p id="roomMeta" class="muted"></p>
+        </div>
+        <button id="startBtn" class="primary">Start Game ▶</button>
+      </div>
+      <div class="host-grid">
+        <div class="panel">
+          <div class="section-title">
+            <h2>Players</h2><span id="playerCount" class="count">0</span>
+          </div>
+          <div id="players" class="player-list"></div>
+        </div>
+        <div class="panel tips">
+          <h2>How it works</h2>
+          <p>1. Share the PIN with players.</p>
+          <p>2. Start when everyone has joined.</p>
+          <p>3. Questions run for 15 seconds.</p>
+          <p>4. Faster correct answers earn more points.</p>
+        </div>
+      </div>
+    </section>
+    <section id="gameView" class="hidden">
+      <div class="game-top">
+        <div><span id="qProgress" class="eyebrow">QUESTION</span>
+          <h1 id="hostQuestion">Waiting…</h1>
+        </div>
+        <div id="hostTimer" class="big-timer">15</div>
+      </div>
+      <div id="hostOptions" class="host-options"></div>
+      <div id="reveal" class="panel reveal hidden">
+        <h2>Answer revealed</h2>
+        <p id="explanation"></p>
+      </div>
+      <div class="panel">
+        <div class="section-title">
+          <h2>Live Leaderboard</h2>
+        </div>
+        <div id="hostLeaderboard"></div>
+      </div>
+    </section>
+    <section id="endView" class="hidden panel end-card">
+      <div class="trophy">♛</div>
+      <p class="eyebrow">QUIZ COMPLETE</p>
+      <h1 id="winnerText"></h1>
+      <div id="finalRanks"></div><a class="secondary" href="/host.html">New Quiz</a>
+    </section>
+  </main>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/app.js"></script>
+  <script>QuizApp.initHost();</script>
+</body>
+
+</html>

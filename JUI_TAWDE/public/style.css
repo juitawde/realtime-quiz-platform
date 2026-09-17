@@ -1,0 +1,599 @@
+:root {
+    --ink: #33262b;
+    --muted: #76676d;
+    --rose: #d98f9f;
+    --rose2: #f4d9de;
+    --cream: #fff9f3;
+    --lilac: #e9ddf4;
+    --mint: #dcebe2;
+    --line: #eadbd5;
+    --white: #fff;
+    --shadow: 0 18px 55px rgba(71, 46, 53, .11)
+}
+
+* {
+    box-sizing: border-box
+}
+
+body {
+    margin: 0;
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    color: var(--ink);
+    background: radial-gradient(circle at 15% 10%, #f8e2e4 0, transparent 30%), radial-gradient(circle at 90% 85%, #e8def3 0, transparent 32%), var(--cream);
+    min-height: 100vh
+}
+
+a {
+    text-decoration: none;
+    color: inherit
+}
+
+button,
+input,
+select {
+    font: inherit
+}
+
+button {
+    cursor: pointer;
+    border: 0
+}
+
+h1,
+h2,
+h3,
+p {
+    margin-top: 0
+}
+
+.hidden {
+    display: none !important
+}
+
+.muted {
+    color: var(--muted)
+}
+
+.eyebrow {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    color: #a16d78;
+    margin-bottom: 10px
+}
+
+.topbar {
+    height: 72px;
+    padding: 0 5%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(234, 219, 213, .8);
+    background: rgba(255, 249, 243, .72);
+    backdrop-filter: blur(12px)
+}
+
+.logo {
+    font-weight: 900;
+    letter-spacing: 1px
+}
+
+.role-pill,
+.count,
+.score-chip {
+    background: var(--rose2);
+    padding: 8px 13px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1px
+}
+
+.landing {
+    display: grid;
+    place-items: center;
+    padding: 28px
+}
+
+.landing-card {
+    max-width: 760px;
+    width: 100%;
+    text-align: center
+}
+
+.brand-mark {
+    margin: auto auto 22px;
+    width: 54px;
+    height: 54px;
+    display: grid;
+    place-items: center;
+    border-radius: 18px;
+    background: var(--ink);
+    color: white;
+    font-size: 25px;
+    box-shadow: var(--shadow)
+}
+
+.landing h1 {
+    font-size: clamp(48px, 8vw, 82px);
+    line-height: .95;
+    margin-bottom: 20px;
+    letter-spacing: -4px
+}
+
+.landing h1 span {
+    font-style: italic;
+    color: #b66e7d
+}
+
+.subtitle {
+    font-size: 18px;
+    color: var(--muted);
+    margin-bottom: 42px
+}
+
+.portal-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px
+}
+
+.portal {
+    padding: 27px;
+    text-align: left;
+    border: 1px solid var(--line);
+    border-radius: 22px;
+    background: rgba(255, 255, 255, .68);
+    box-shadow: var(--shadow);
+    transition: .2s
+}
+
+.portal:hover {
+    transform: translateY(-4px)
+}
+
+.portal b {
+    display: block;
+    font-size: 18px;
+    margin-bottom: 7px
+}
+
+.portal small {
+    color: var(--muted)
+}
+
+.portal.host {
+    background: linear-gradient(135deg, #fff, #f7e3e6)
+}
+
+.portal.player {
+    background: linear-gradient(135deg, #fff, #ece2f4)
+}
+
+.feature-row {
+    display: flex;
+    justify-content: center;
+    gap: 22px;
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: 25px
+}
+
+.dashboard {
+    max-width: 1050px;
+    margin: 50px auto;
+    padding: 0 22px
+}
+
+.panel {
+    background: rgba(255, 255, 255, .72);
+    border: 1px solid var(--line);
+    border-radius: 24px;
+    padding: 28px;
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(10px)
+}
+
+.narrow {
+    max-width: 520px;
+    margin: 70px auto
+}
+
+.narrow h1 {
+    font-size: 38px
+}
+
+.panel label,
+.join-card label {
+    display: block;
+    font-size: 12px;
+    font-weight: 800;
+    margin: 20px 0;
+    color: var(--muted)
+}
+
+input,
+select {
+    width: 100%;
+    margin-top: 8px;
+    padding: 14px 15px;
+    border: 1px solid var(--line);
+    border-radius: 13px;
+    background: #fffdfb;
+    color: var(--ink);
+    outline: none
+}
+
+input:focus,
+select:focus {
+    border-color: var(--rose)
+}
+
+.primary,
+.secondary {
+    display: inline-block;
+    padding: 14px 20px;
+    border-radius: 13px;
+    font-weight: 800
+}
+
+.primary {
+    background: var(--ink);
+    color: #fff
+}
+
+.secondary {
+    background: var(--rose2);
+    margin-top: 18px
+}
+
+.msg {
+    font-size: 13px;
+    color: #a04d5c;
+    margin-top: 14px;
+    min-height: 18px
+}
+
+.room-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px
+}
+
+.pin {
+    font-size: 60px;
+    line-height: 1;
+    font-weight: 900;
+    letter-spacing: 8px
+}
+
+.host-grid {
+    display: grid;
+    grid-template-columns: 1.4fr .8fr;
+    gap: 20px
+}
+
+.section-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between
+}
+
+.section-title h2 {
+    margin: 0 0 18px
+}
+
+.player-list {
+    display: grid;
+    gap: 10px
+}
+
+.player-item,
+.rank {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 13px 15px;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 13px
+}
+
+.player-item span:first-child:before {
+    content: "";
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #7daa8f;
+    margin-right: 10px
+}
+
+.tips p {
+    padding: 10px 0;
+    border-bottom: 1px dashed var(--line);
+    font-size: 14px;
+    color: var(--muted)
+}
+
+.game-top,
+.game-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 30px;
+    margin-bottom: 25px
+}
+
+.game-top h1 {
+    font-size: 35px;
+    max-width: 780px
+}
+
+.big-timer {
+    width: 74px;
+    height: 74px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: var(--ink);
+    color: #fff;
+    font-size: 27px;
+    font-weight: 900;
+    flex: none
+}
+
+.host-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 20px
+}
+
+.host-option {
+    padding: 18px;
+    border-radius: 15px;
+    background: #fff;
+    border: 1px solid var(--line);
+    font-weight: 700
+}
+
+.host-option.correct {
+    background: var(--mint);
+    border-color: #a8cbb7
+}
+
+.reveal {
+    margin-bottom: 20px
+}
+
+.reveal h2 {
+    margin-bottom: 8px
+}
+
+.player-main {
+    max-width: 720px;
+    margin: 45px auto;
+    padding: 0 18px
+}
+
+.join-card {
+    max-width: 480px;
+    margin: auto
+}
+
+.join-card h1,
+.wait-card h1 {
+    font-size: 44px
+}
+
+.wait-card {
+    text-align: center
+}
+
+.pulse-dot {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #8fb59f;
+    margin: 4px auto 25px;
+    box-shadow: 0 0 0 10px #e4f0e9
+}
+
+.play-head {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 20px
+}
+
+.score-chip {
+    grid-column: 1/-1;
+    justify-self: start;
+    background: #fff;
+    border: 1px solid var(--line)
+}
+
+.question-card {
+    padding: 28px;
+    background: rgba(255, 255, 255, .82);
+    border: 1px solid var(--line);
+    border-radius: 25px;
+    box-shadow: var(--shadow)
+}
+
+.question-card h1 {
+    font-size: 28px;
+    line-height: 1.2;
+    margin-bottom: 25px
+}
+
+.answer-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 13px
+}
+
+.answer {
+    min-height: 90px;
+    border-radius: 17px;
+    padding: 18px;
+    text-align: left;
+    font-size: 17px;
+    font-weight: 850;
+    border: 2px solid transparent;
+    transition: .15s
+}
+
+.answer:hover {
+    transform: translateY(-2px)
+}
+
+.answer:nth-child(1) {
+    background: #f3d9de
+}
+
+.answer:nth-child(2) {
+    background: #e5dcef
+}
+
+.answer:nth-child(3) {
+    background: #dcebe3
+}
+
+.answer:nth-child(4) {
+    background: #f5e5c9
+}
+
+.answer:disabled {
+    opacity: .5;
+    cursor: not-allowed
+}
+
+.answer-msg {
+    text-align: center;
+    min-height: 42px;
+    padding: 15px;
+    font-weight: 800
+}
+
+.mini-board {
+    padding: 20px
+}
+
+.mini-board h3 {
+    margin-bottom: 10px
+}
+
+.rank {
+    margin-top: 7px
+}
+
+.rank.me {
+    outline: 2px solid #d9a0aa
+}
+
+.rank .score {
+    font-weight: 900
+}
+
+.end-card {
+    text-align: center;
+    max-width: 650px;
+    margin: 60px auto
+}
+
+.trophy {
+    font-size: 54px;
+    margin-bottom: 15px
+}
+
+.end-card h1 {
+    font-size: 38px
+}
+
+.rank-list {
+    margin-top: 20px;
+    text-align: left
+}
+
+.feature-list {
+  /* Aligns items horizontally and removes default list indentation */
+  display: flex;
+  gap: 24px; 
+  list-style-type: disc;
+  padding: 0;
+  margin: 0;
+  
+  /* Applies your exact font stack and a clean font size */
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 14.5px;
+  font-weight: 500;
+}
+
+.feature-list li {
+  /* Ensures the bullet points stay inside the flex items */
+  list-style-position: inside; 
+}
+
+.feature-list li::marker {
+  /* Changes just the bullet point color to your exact hex code */
+  color: #d98f9f;
+  font-size: 1.5em; 
+}
+
+
+@media(max-width:700px) {
+
+    .portal-grid,
+    .host-grid,
+    .host-options,
+    .answer-grid {
+        grid-template-columns: 1fr
+    }
+
+    .landing h1 {
+        letter-spacing: -2px
+    }
+
+    .feature-row {
+        flex-direction: column;
+        gap: 8px
+    }
+
+    .dashboard {
+        margin-top: 30px
+    }
+
+    .room-head {
+        align-items: flex-start;
+        gap: 20px;
+        flex-direction: column
+    }
+
+    .pin {
+        font-size: 48px
+    }
+
+    .game-top h1 {
+        font-size: 25px
+    }
+
+    .question-card h1 {
+        font-size: 23px
+    }
+
+    .answer {
+        min-height: 75px
+    }
+
+    .topbar {
+        padding: 0 18px
+    }
+
+    .role-pill {
+        display: none
+    }
+}

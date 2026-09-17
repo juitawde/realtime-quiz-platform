@@ -1,0 +1,57 @@
+[
+  {
+    "question": "What is Node.js runtime based on?",
+    "options": [
+      "V8",
+      "SpiderMonkey",
+      "Chakra",
+      "JVM"
+    ],
+    "correctOption": 0,
+    "explanation": "Node.js uses Google's V8 JavaScript engine."
+  },
+  {
+    "question": "Which Socket.io method sends an event to everyone in a room?",
+    "options": [
+      "io.to(room).emit()",
+      "socket.only()",
+      "room.send()",
+      "io.broadcastRoom()"
+    ],
+    "correctOption": 0,
+    "explanation": "io.to(room).emit() broadcasts an event to every socket in that room."
+  },
+  {
+    "question": "Which HTTP status code means 'Not Found'?",
+    "options": [
+      "200",
+      "301",
+      "404",
+      "500"
+    ],
+    "correctOption": 2,
+    "explanation": "404 indicates that the requested resource could not be found."
+  },
+  {
+    "question": "Which JavaScript structure stores key-value pairs?",
+    "options": [
+      "Map",
+      "Stack",
+      "Queue",
+      "Tuple"
+    ],
+    "correctOption": 0,
+    "explanation": "Map is a built-in JavaScript collection for key-value pairs."
+  },
+  {
+    "question": "What does CORS control?",
+    "options": [
+      "Cross-origin access",
+      "CPU speed",
+      "Database indexing",
+      "File compression"
+    ],
+    "correctOption": 0,
+    "explanation": "CORS controls whether browser requests from one origin can access another origin."
+  }
+]
