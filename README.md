@@ -2,6 +2,9 @@
 
 A Socket.io + Express multiplayer quiz battle with a server-authoritative timer, speed-based scoring, PIN rooms, anti-cheat validation and live leaderboards.
 
+**Live Demo:**
+https://realtime-quiz-platform-w0c4.onrender.com/
+
 ## Run
 
 ```bash
@@ -49,6 +52,32 @@ assignment-14-quiz-socket/
 ├── .env
 └── README.md
 ```
+## Screenshots
+
+<img width="1470" height="877" alt="Screenshot 2026-09-17 at 7 43 44 PM" src="https://github.com/user-attachments/assets/9c32f6ce-b788-4818-8505-c28a8a4a083b" />
+
+<img width="1470" height="882" alt="Screenshot 2026-09-17 at 7 43 57 PM" src="https://github.com/user-attachments/assets/2c565a75-bb05-4068-bac2-c1ffb9cbd7c7" />
+
+<img width="1470" height="881" alt="Screenshot 2026-09-17 at 7 45 03 PM" src="https://github.com/user-attachments/assets/8c2700d8-21bc-4178-92ed-15088638be23" />
+
+<img width="1470" height="956" alt="Screenshot 2026-09-17 at 7 45 48 PM" src="https://github.com/user-attachments/assets/943e8b85-75e1-41b5-be4a-93bd4ce7698a" />
+
+<img width="1470" height="956" alt="Screenshot 2026-09-17 at 7 46 19 PM" src="https://github.com/user-attachments/assets/8aebbac3-f7bf-43c4-a5ab-acb581ce1001" />
+
+<img width="1470" height="876" alt="Screenshot 2026-09-17 at 7 46 29 PM" src="https://github.com/user-attachments/assets/cc738e5f-7f79-4182-80a6-ddd03cca1205" />
+
+<img width="1470" height="878" alt="Screenshot 2026-09-17 at 7 46 43 PM" src="https://github.com/user-attachments/assets/bad2fd34-e1ef-476b-b2ae-6d3d1491c1b4" />
+
+<img width="1470" height="885" alt="Screenshot 2026-09-17 at 7 46 54 PM" src="https://github.com/user-attachments/assets/ae227087-7a55-44e7-8206-00f91d6d8100" />
+
+<img width="1470" height="956" alt="Screenshot 2026-09-17 at 7 47 08 PM" src="https://github.com/user-attachments/assets/2dd3e8a5-3798-4a00-9b4a-0520a7b5366d" />
+
+<img width="1470" height="956" alt="Screenshot 2026-09-17 at 7 47 28 PM" src="https://github.com/user-attachments/assets/691ed4ed-07af-4896-9974-4ed2e52d3882" />
+
+<img width="1470" height="956" alt="Screenshot 2026-09-17 at 7 47 56 PM" src="https://github.com/user-attachments/assets/d241e8fb-6a1b-4600-b2cf-8f8abab5e706" />
+
+<img width="1470" height="882" alt="Screenshot 2026-09-17 at 7 48 06 PM" src="https://github.com/user-attachments/assets/d067688d-635d-4c3c-8c0b-f887b2aea7aa" />
+
 
 ## Demo
 
