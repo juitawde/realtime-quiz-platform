@@ -160,7 +160,7 @@ realtime-quiz-platform/
 
 ## Screenshots
 
-<img width="2936" height="1762" alt="image" src="https://github.com/user-attachments/assets/e86e5c77-3879-40dc-b20c-5b693a0b37e0" />
+<img width="2940" height="1760" alt="image" src="https://github.com/user-attachments/assets/7c631abf-5294-4aef-8222-230fd00cc86f" />
 
 <img width="2940" height="1766" alt="image" src="https://github.com/user-attachments/assets/67400cd6-6b6a-4874-b899-fd1925b20f6a" />
 
