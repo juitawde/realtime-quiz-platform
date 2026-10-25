@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Quiz Session Report — Quiz Arena</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+  <header class="topbar">
+    <a href="/" class="logo">✦ QUIZ ARENA</a>
+    <div style="display:flex; align-items:center; gap:12px;">
+      <a href="/host.html" class="secondary btn-small" style="display:inline-flex; align-items:center; gap:6px; text-decoration:none; padding:8px 14px; border-radius:10px; font-weight:600; font-size:13px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        <span>Back to Dashboard</span>
+      </a>
+      <span class="role-pill">SESSION REPORT</span>
+      <div class="auth-nav-container"></div>
+    </div>
+  </header>
+
+  <main class="report-page-wrapper" style="max-width:1120px; margin:32px auto; padding:0 24px 64px;">
+    <!-- Dedicated Full Page Report Container -->
+    <div id="reportPageContainer"></div>
+  </main>
+
+  <script src="/js/auth.js"></script>
+  <script src="/js/quizReports.js"></script>
+  <script>
+    (function () {
+      function startReport() {
+        if (window.AuthManager && typeof window.AuthManager.init === "function") {
+          window.AuthManager.init();
+        }
+        const urlParams = new URLSearchParams(window.location.search);
+        const sessionId = urlParams.get("sessionId");
+        if (window.QuizReports && typeof window.QuizReports.loadReportPage === "function") {
+          window.QuizReports.loadReportPage(sessionId, "reportPageContainer");
+        }
+      }
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", startReport);
+      } else {
+        startReport();
+      }
+    })();
+  </script>
+</body>
+
+</html>

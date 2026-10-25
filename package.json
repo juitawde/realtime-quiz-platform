@@ -6,5 +6,10 @@
     "start": "node JUI_TAWDE/server.js",
     "dev": "nodemon JUI_TAWDE/server.js",
     "test": "node tests/runAllTests.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cookie-parser": "^1.4.7",
+    "mongoose": "^9.11.4"
   }
 }

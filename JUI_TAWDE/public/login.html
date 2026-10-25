@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign In — Quiz Arena</title>
+  <meta name="description" content="Sign in to your Quiz Arena account to host multiplayer quizzes and view your battle history and analytics.">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+</head>
+
+<body class="landing-body" style="min-height:100vh; display:flex; flex-direction:column; justify-content:center; align-items:center; padding:24px 16px;">
+  <!-- Minimal Top Navigation Link -->
+  <header style="width:100%; max-width:440px; margin-bottom:20px; display:flex; justify-content:space-between; align-items:center;">
+    <a href="/" class="logo" style="text-decoration:none; display:inline-flex; align-items:center; gap:8px;">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+      </svg>
+      <span>QUIZ ARENA</span>
+    </a>
+    <a href="/" class="secondary" style="font-size:13px; padding:6px 12px; text-decoration:none;">← Home</a>
+  </header>
+
+  <!-- Login Card -->
+  <main class="panel" style="width:100%; max-width:440px; box-shadow:0 12px 32px rgba(27,22,34,0.08); padding:32px 28px;">
+    <div style="margin-bottom:24px;">
+      <p class="eyebrow" style="margin:0 0 4px 0;">WELCOME BACK</p>
+      <h1 style="margin:0 0 8px 0; font-size:26px;">Sign in to Quiz Arena</h1>
+      <p class="muted" style="margin:0; font-size:14px; line-height:1.5;">
+        Access your hosted trivia games, detailed battle reports, and player performance history.
+      </p>
+    </div>
+
+    <form id="loginForm" novalidate>
+      <div style="margin-bottom:16px;">
+        <label for="loginEmail" style="display:block; font-weight:600; font-size:13px; margin-bottom:6px;">
+          Email address
+        </label>
+        <input
+          id="loginEmail"
+          name="email"
+          type="email"
+          autocomplete="email"
+          required
+          placeholder="name@example.com"
+          style="width:100%; box-sizing:border-box;"
+        >
+      </div>
+
+      <div style="margin-bottom:20px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+          <label for="loginPassword" style="font-weight:600; font-size:13px; margin:0;">
+            Password
+          </label>
+          <button
+            type="button"
+            id="togglePasswordBtn"
+            style="background:none; border:none; color:var(--muted); font-size:12px; cursor:pointer; padding:0; display:inline-flex; align-items:center; gap:4px;"
+            aria-label="Toggle password visibility"
+          >
+            <svg id="eyeIcon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+            <span id="togglePasswordText">Show</span>
+          </button>
+        </div>
+        <input
+          id="loginPassword"
+          name="password"
+          type="password"
+          autocomplete="current-password"
+          required
+          placeholder="••••••••"
+          style="width:100%; box-sizing:border-box;"
+        >
+      </div>
+
+      <div id="loginFeedback" class="msg" style="margin-bottom:16px; min-height:20px;"></div>
+
+      <button id="loginSubmitBtn" type="submit" class="primary" style="width:100%; font-size:15px; padding:12px; display:flex; justify-content:center; align-items:center; gap:8px;">
+        <span>Sign In →</span>
+      </button>
+    </form>
+
+    <div style="margin-top:24px; padding-top:20px; border-top:1px solid var(--line); text-align:center;">
+      <p style="margin:0; font-size:14px; color:var(--muted);">
+        Don't have an account?
+        <a id="registerLink" href="/register.html" style="font-weight:600; color:var(--rose2); text-decoration:none;">
+          Create account →
+        </a>
+      </p>
+    </div>
+  </main>
+
+  <script src="/js/auth.js"></script>
+  <script>
+    (function () {
+      const form = document.getElementById("loginForm");
+      const emailInput = document.getElementById("loginEmail");
+      const passInput = document.getElementById("loginPassword");
+      const feedback = document.getElementById("loginFeedback");
+      const submitBtn = document.getElementById("loginSubmitBtn");
+      const toggleBtn = document.getElementById("togglePasswordBtn");
+      const toggleText = document.getElementById("togglePasswordText");
+      const registerLink = document.getElementById("registerLink");
+
+      // Handle redirect URL preservation
+      const urlParams = new URLSearchParams(window.location.search);
+      const returnUrl = urlParams.get("returnUrl") || "/host.html";
+      if (registerLink && returnUrl) {
+        registerLink.href = `/register.html?returnUrl=${encodeURIComponent(returnUrl)}`;
+      }
+
+      // Password toggle
+      toggleBtn.onclick = () => {
+        const isPass = passInput.type === "password";
+        passInput.type = isPass ? "text" : "password";
+        toggleText.textContent = isPass ? "Hide" : "Show";
+      };
+
+      form.onsubmit = async (e) => {
+        e.preventDefault();
+        feedback.textContent = "";
+        feedback.style.color = "var(--ink)";
+
+        const email = emailInput.value.trim();
+        const password = passInput.value;
+
+        if (!email || !password) {
+          feedback.textContent = "Please provide both your email address and password.";
+          feedback.style.color = "var(--danger)";
+          return;
+        }
+
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = `
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="spin">
+            <line x1="12" y1="2" x2="12" y2="6"></line>
+            <line x1="12" y1="18" x2="12" y2="22"></line>
+            <line x1="4.93" y1="4.93" x2="7.76" y2="7.76"></line>
+            <line x1="16.24" y1="16.24" x2="19.07" y2="19.07"></line>
+            <line x1="2" y1="12" x2="6" y2="12"></line>
+            <line x1="18" y1="12" x2="22" y2="12"></line>
+            <line x1="4.93" y1="19.07" x2="7.76" y2="16.24"></line>
+            <line x1="16.24" y1="7.76" x2="19.07" y2="4.93"></line>
+          </svg>
+          <span>Signing In...</span>
+        `;
+
+        try {
+          const res = await AuthManager.login(email, password);
+          if (res.ok) {
+            feedback.style.color = "var(--success)";
+            feedback.textContent = "Signed in successfully! Redirecting...";
+            setTimeout(() => {
+              window.location.href = returnUrl;
+            }, 500);
+          } else {
+            feedback.style.color = "var(--danger)";
+            feedback.textContent = res.error || "Invalid credentials.";
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = `<span>Sign In →</span>`;
+          }
+        } catch (err) {
+          feedback.style.color = "var(--danger)";
+          feedback.textContent = "Connection error. Please try again.";
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = `<span>Sign In →</span>`;
+        }
+      };
+    })();
+  </script>
+</body>
+
+</html>

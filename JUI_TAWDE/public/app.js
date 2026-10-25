@@ -5,7 +5,7 @@ const QuizApp = (() => {
 
   function show(id) {
     const views = [
-      "createView", "builderView", "importView", "reviewView", "savedView",
+      "createView", "builderView", "importView", "reviewView", "savedView", "historyView",
       "lobbyView", "gameView", "endView", "joinView", "waitView", "playView"
     ];
     views.forEach(x => $(x)?.classList.add("hidden"));
@@ -319,6 +319,9 @@ const QuizApp = (() => {
       btn.onclick = () => {
         const tab = btn.dataset.tab;
         if (tab === "savedView") loadSavedQuizzes();
+        if (tab === "historyView" && window.QuizHistory) {
+          window.QuizHistory.loadHistory($("historyView"));
+        }
         show(tab);
       };
     });
@@ -330,9 +333,11 @@ const QuizApp = (() => {
     // 1. DEFAULT QUIZ SETUP
     $("createBtn").onclick = () => {
       $("createMsg").textContent = "";
+      const user = window.AuthManager ? window.AuthManager.getUser() : null;
       socket.emit("quiz:create", {
         hostName: $("hostName").value,
-        category: $("category").value
+        category: $("category").value,
+        hostUserId: user ? user.id : null
       }, res => {
         if (!res?.ok) $("createMsg").textContent = res?.message || "Error creating room.";
       });
@@ -417,10 +422,12 @@ const QuizApp = (() => {
       }
 
       $("builderMsg").textContent = "Creating room...";
+      const user = window.AuthManager ? window.AuthManager.getUser() : null;
       socket.emit("quiz:create", {
         hostName: $("hostName").value,
         category: "Custom",
-        customQuiz: validation.sanitized
+        customQuiz: validation.sanitized,
+        hostUserId: user ? user.id : null
       }, res => {
         if (!res?.ok) $("builderMsg").textContent = res?.message || "Failed to create room.";
       });
@@ -632,10 +639,12 @@ const QuizApp = (() => {
       }
 
       $("reviewMsg").textContent = "Creating room...";
+      const user = window.AuthManager ? window.AuthManager.getUser() : null;
       socket.emit("quiz:create", {
         hostName: $("hostName").value,
         category: "Imported",
-        customQuiz: validation.sanitized
+        customQuiz: validation.sanitized,
+        hostUserId: user ? user.id : null
       }, res => {
         if (!res?.ok) $("reviewMsg").textContent = res?.message || "Failed to create room.";
       });
@@ -673,10 +682,12 @@ const QuizApp = (() => {
           playBtn.className = "primary btn-small";
           playBtn.textContent = "Play ▶";
           playBtn.onclick = () => {
+            const user = window.AuthManager ? window.AuthManager.getUser() : null;
             socket.emit("quiz:create", {
               hostName: $("hostName").value,
               category: "Custom",
-              customQuiz: quiz
+              customQuiz: quiz,
+              hostUserId: user ? user.id : null
             }, res => {
               if (!res?.ok) alert(res?.message || "Error starting game.");
             });
@@ -843,16 +854,22 @@ const QuizApp = (() => {
           lobbyMsg.style.display = "block";
           lobbyMsg.innerHTML = `
             <div style="display:flex; flex-direction:column; gap:8px;">
-              <div>⚠️ <b>At least one player must join</b> before starting the battle!</div>
+              <div style="display:inline-flex; align-items:center; gap:6px;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                <span><b>At least one player must join</b> before starting the battle!</span>
+              </div>
               <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-top:4px;">
                 <a href="/player.html?pin=${encodeURIComponent(pin)}" target="_blank" class="primary btn-small" style="text-decoration:none; display:inline-flex; align-items:center; gap:5px;">
-                  👤 Open Player Screen (New Tab)
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                  <span>Open Player Screen (New Tab)</span>
                 </a>
-                <button id="addBotInlineBtn" type="button" class="btn-secondary btn-small">
-                  🤖 + Add Test Player
+                <button id="addBotInlineBtn" type="button" class="btn-secondary btn-small" style="display:inline-flex; align-items:center; gap:5px;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="10" rx="2"></rect><circle cx="12" cy="5" r="2"></circle><path d="M12 7v4"></path><line x1="8" y1="16" x2="8.01" y2="16"></line><line x1="16" y1="16" x2="16.01" y2="16"></line></svg>
+                  <span>+ Add Test Player</span>
                 </button>
-                <button id="startSoloInlineBtn" type="button" class="btn-secondary btn-small" title="Run question countdown & reveal without players">
-                  👁 Start Solo Preview ▶
+                <button id="startSoloInlineBtn" type="button" class="btn-secondary btn-small" style="display:inline-flex; align-items:center; gap:5px;" title="Run question countdown & reveal without players">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                  <span>Start Solo Preview</span>
                 </button>
               </div>
             </div>
@@ -905,8 +922,22 @@ const QuizApp = (() => {
       $("winnerText").textContent = data.winner
         ? `${data.winner.name} wins with ${data.winner.score} points!`
         : "Quiz complete!";
-      $("finalRanks").className = "rank-list";
-      renderRanks($("finalRanks"), data.finalRanks);
+
+      if (window.PodiumRenderer && $("podiumArea")) {
+        $("finalRanks").innerHTML = "";
+        window.PodiumRenderer.renderPodiumAndLeaderboard({
+          containerEl: $("podiumArea"),
+          winner: data.winner,
+          finalRanks: data.finalRanks || [],
+          podium: data.podium || [],
+          sessionId: data.sessionId,
+          isHost: true,
+          currentUser: window.AuthManager ? window.AuthManager.getUser() : null
+        });
+      } else {
+        $("finalRanks").className = "rank-list";
+        renderRanks($("finalRanks"), data.finalRanks);
+      }
       show("endView");
     });
 
@@ -922,16 +953,42 @@ const QuizApp = (() => {
       const entered = $("pinInput").value.trim();
       const name = $("nameInput").value.trim();
       $("joinMsg").textContent = "";
-      socket.emit("quiz:join", { pin: entered, playerName: name }, res => {
-        if (!res?.ok) $("joinMsg").textContent = res.message;
+
+      if (!entered) {
+        $("joinMsg").textContent = "Please enter the 4-digit Room PIN.";
+        $("pinInput").focus();
+        return;
+      }
+      if (!name) {
+        $("joinMsg").textContent = "Please enter your player nickname.";
+        $("nameInput").focus();
+        return;
+      }
+
+      const user = window.AuthManager ? window.AuthManager.getUser() : null;
+      socket.emit("quiz:join", {
+        pin: entered,
+        playerName: name,
+        userId: user ? user.id : null
+      }, res => {
+        if (!res?.ok) {
+          $("joinMsg").textContent = res?.message || "Failed to join room. Please check the PIN.";
+        } else {
+          pin = res.pin || entered;
+          playerName = res.name || name;
+          $("welcomeName").textContent = `Welcome, ${playerName}!`;
+          show("waitView");
+        }
       });
     };
 
     socket.on("quiz:joined", data => {
-      pin = data.pin;
-      playerName = data.name;
-      $("welcomeName").textContent = `Welcome, ${playerName}!`;
-      show("waitView");
+      if (data) {
+        pin = data.pin || pin;
+        playerName = data.name || playerName;
+        $("welcomeName").textContent = `Welcome, ${playerName}!`;
+        show("waitView");
+      }
     });
 
     socket.on("lobby:update", data => {
@@ -1003,8 +1060,22 @@ const QuizApp = (() => {
       $("playerWinner").textContent = data.winner
         ? `${data.winner.name} wins!`
         : "Quiz complete!";
-      $("playerFinalRanks").className = "rank-list";
-      renderRanks($("playerFinalRanks"), data.finalRanks, playerName);
+
+      if (window.PodiumRenderer && $("playerPodiumArea")) {
+        $("playerFinalRanks").innerHTML = "";
+        window.PodiumRenderer.renderPodiumAndLeaderboard({
+          containerEl: $("playerPodiumArea"),
+          winner: data.winner,
+          finalRanks: data.finalRanks || [],
+          podium: data.podium || [],
+          sessionId: data.sessionId,
+          isHost: false,
+          currentUser: window.AuthManager ? window.AuthManager.getUser() : null
+        });
+      } else {
+        $("playerFinalRanks").className = "rank-list";
+        renderRanks($("playerFinalRanks"), data.finalRanks, playerName);
+      }
       show("endView");
     });
 

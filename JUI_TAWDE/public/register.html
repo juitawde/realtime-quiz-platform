@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Account — Quiz Arena</title>
+  <meta name="description" content="Create an account on Quiz Arena to host multiplayer rooms, review your performance, and track battle analytics.">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+</head>
+
+<body class="landing-body" style="min-height:100vh; display:flex; flex-direction:column; justify-content:center; align-items:center; padding:24px 16px;">
+  <!-- Minimal Top Navigation Link -->
+  <header style="width:100%; max-width:460px; margin-bottom:20px; display:flex; justify-content:space-between; align-items:center;">
+    <a href="/" class="logo" style="text-decoration:none; display:inline-flex; align-items:center; gap:8px;">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+      </svg>
+      <span>QUIZ ARENA</span>
+    </a>
+    <a href="/" class="secondary" style="font-size:13px; padding:6px 12px; text-decoration:none;">← Home</a>
+  </header>
+
+  <!-- Register Card -->
+  <main class="panel" style="width:100%; max-width:460px; box-shadow:0 12px 32px rgba(27,22,34,0.08); padding:32px 28px;">
+    <div style="margin-bottom:24px;">
+      <p class="eyebrow" style="margin:0 0 4px 0;">JOIN THE ARENA</p>
+      <h1 style="margin:0 0 8px 0; font-size:26px;">Create your account</h1>
+      <p class="muted" style="margin:0; font-size:14px; line-height:1.5;">
+        Host multiplayer trivia battles, track your score history, and review question-level reports.
+      </p>
+    </div>
+
+    <form id="registerForm" novalidate>
+      <div style="margin-bottom:14px;">
+        <label for="regName" style="display:block; font-weight:600; font-size:13px; margin-bottom:6px;">
+          Display name
+        </label>
+        <input
+          id="regName"
+          name="displayName"
+          type="text"
+          maxlength="30"
+          required
+          placeholder="e.g. Captain Trivia"
+          style="width:100%; box-sizing:border-box;"
+        >
+      </div>
+
+      <div style="margin-bottom:14px;">
+        <label for="regEmail" style="display:block; font-weight:600; font-size:13px; margin-bottom:6px;">
+          Email address
+        </label>
+        <input
+          id="regEmail"
+          name="email"
+          type="email"
+          autocomplete="email"
+          required
+          placeholder="name@example.com"
+          style="width:100%; box-sizing:border-box;"
+        >
+      </div>
+
+      <div style="margin-bottom:14px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+          <label for="regPassword" style="font-weight:600; font-size:13px; margin:0;">
+            Password
+          </label>
+          <span style="font-size:12px; color:var(--muted);">Min. 6 characters</span>
+        </div>
+        <div style="position:relative;">
+          <input
+            id="regPassword"
+            name="password"
+            type="password"
+            autocomplete="new-password"
+            required
+            placeholder="••••••••"
+            style="width:100%; box-sizing:border-box; padding-right:60px;"
+          >
+          <button
+            type="button"
+            id="toggleRegPassBtn"
+            style="position:absolute; right:10px; top:50%; transform:translateY(-50%); background:none; border:none; color:var(--muted); font-size:12px; cursor:pointer;"
+          >
+            Show
+          </button>
+        </div>
+      </div>
+
+      <div style="margin-bottom:20px;">
+        <label for="regConfirmPassword" style="display:block; font-weight:600; font-size:13px; margin-bottom:6px;">
+          Confirm password
+        </label>
+        <input
+          id="regConfirmPassword"
+          name="confirmPassword"
+          type="password"
+          autocomplete="new-password"
+          required
+          placeholder="••••••••"
+          style="width:100%; box-sizing:border-box;"
+        >
+      </div>
+
+      <div id="registerFeedback" class="msg" style="margin-bottom:16px; min-height:20px;"></div>
+
+      <button id="registerSubmitBtn" type="submit" class="primary" style="width:100%; font-size:15px; padding:12px; display:flex; justify-content:center; align-items:center; gap:8px;">
+        <span>Create Account →</span>
+      </button>
+    </form>
+
+    <div style="margin-top:24px; padding-top:20px; border-top:1px solid var(--line); text-align:center;">
+      <p style="margin:0; font-size:14px; color:var(--muted);">
+        Already have an account?
+        <a id="loginLink" href="/login.html" style="font-weight:600; color:var(--rose2); text-decoration:none;">
+          Sign in →
+        </a>
+      </p>
+    </div>
+  </main>
+
+  <script src="/js/auth.js"></script>
+  <script>
+    (function () {
+      const form = document.getElementById("registerForm");
+      const nameInput = document.getElementById("regName");
+      const emailInput = document.getElementById("regEmail");
+      const passInput = document.getElementById("regPassword");
+      const confirmInput = document.getElementById("regConfirmPassword");
+      const feedback = document.getElementById("registerFeedback");
+      const submitBtn = document.getElementById("registerSubmitBtn");
+      const togglePassBtn = document.getElementById("toggleRegPassBtn");
+      const loginLink = document.getElementById("loginLink");
+
+      // Handle redirect URL preservation
+      const urlParams = new URLSearchParams(window.location.search);
+      const returnUrl = urlParams.get("returnUrl") || "/host.html";
+      if (loginLink && returnUrl) {
+        loginLink.href = `/login.html?returnUrl=${encodeURIComponent(returnUrl)}`;
+      }
+
+      // Password toggle
+      togglePassBtn.onclick = () => {
+        const isPass = passInput.type === "password";
+        passInput.type = isPass ? "text" : "password";
+        confirmInput.type = isPass ? "text" : "password";
+        togglePassBtn.textContent = isPass ? "Hide" : "Show";
+      };
+
+      form.onsubmit = async (e) => {
+        e.preventDefault();
+        feedback.textContent = "";
+        feedback.style.color = "var(--ink)";
+
+        const displayName = nameInput.value.trim();
+        const email = emailInput.value.trim();
+        const password = passInput.value;
+        const confirmPassword = confirmInput.value;
+
+        if (!displayName) {
+          feedback.textContent = "Please enter your display name.";
+          feedback.style.color = "var(--danger)";
+          return;
+        }
+
+        if (!email || !email.includes("@")) {
+          feedback.textContent = "Please enter a valid email address.";
+          feedback.style.color = "var(--danger)";
+          return;
+        }
+
+        if (!password || password.length < 6) {
+          feedback.textContent = "Password must be at least 6 characters long.";
+          feedback.style.color = "var(--danger)";
+          return;
+        }
+
+        if (password !== confirmPassword) {
+          feedback.textContent = "Passwords do not match. Please verify both fields.";
+          feedback.style.color = "var(--danger)";
+          return;
+        }
+
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = `
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="spin">
+            <line x1="12" y1="2" x2="12" y2="6"></line>
+            <line x1="12" y1="18" x2="12" y2="22"></line>
+            <line x1="4.93" y1="4.93" x2="7.76" y2="7.76"></line>
+            <line x1="16.24" y1="16.24" x2="19.07" y2="19.07"></line>
+            <line x1="2" y1="12" x2="6" y2="12"></line>
+            <line x1="18" y1="12" x2="22" y2="12"></line>
+            <line x1="4.93" y1="19.07" x2="7.76" y2="16.24"></line>
+            <line x1="16.24" y1="7.76" x2="19.07" y2="4.93"></line>
+          </svg>
+          <span>Creating Account...</span>
+        `;
+
+        try {
+          const res = await AuthManager.register(displayName, email, password);
+          if (res.ok) {
+            feedback.style.color = "var(--success)";
+            feedback.textContent = "Account created successfully! Redirecting...";
+            setTimeout(() => {
+              window.location.href = returnUrl;
+            }, 500);
+          } else {
+            feedback.style.color = "var(--danger)";
+            feedback.textContent = res.error || "Registration failed.";
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = `<span>Create Account →</span>`;
+          }
+        } catch (err) {
+          feedback.style.color = "var(--danger)";
+          feedback.textContent = "Connection error. Please try again.";
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = `<span>Create Account →</span>`;
+        }
+      };
+    })();
+  </script>
+</body>
+
+</html>

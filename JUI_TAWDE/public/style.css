@@ -2277,24 +2277,128 @@ select:focus {
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(51, 38, 43, 0.45);
-  backdrop-filter: blur(6px);
-  display: grid;
-  place-items: center;
-  z-index: 1000;
-  padding: 20px;
+  background: rgba(51, 38, 43, 0.65);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 24px;
 }
 
+.modal-card,
 .modal-content {
   background: var(--cream);
   border: 1px solid var(--line);
   border-radius: 24px;
-  padding: 30px;
-  max-width: 700px;
+  max-width: 720px;
   width: 100%;
-  max-height: 85vh;
+  max-height: 88vh;
+  box-shadow: 0 24px 70px rgba(51, 38, 43, 0.3);
+  position: relative;
+  z-index: 2001;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.modal-large {
+  max-width: 920px;
+}
+
+.modal-header {
+  padding: 20px 28px;
+  border-bottom: 1px solid var(--line);
+  background: rgba(255, 249, 243, 0.98);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.modal-body {
+  padding: 24px 28px 32px;
   overflow-y: auto;
-  box-shadow: 0 24px 70px rgba(51, 38, 43, 0.25);
+  flex: 1;
+}
+
+.modal-close-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(71, 46, 53, 0.05);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0;
+}
+
+.modal-close-btn:hover {
+  background: var(--rose2);
+  color: var(--ink);
+  transform: scale(1.05);
+}
+
+/* Guard against double boxes if a panel is nested inside a panel */
+.panel .panel {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  backdrop-filter: none !important;
+  border-radius: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+/* Tab Pills for Segmented Navigation */
+.tab-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid var(--line);
+  background: var(--white);
+  color: var(--muted);
+}
+
+.tab-pill:hover {
+  color: var(--ink);
+  border-color: var(--rose);
+}
+
+.tab-pill.active {
+  background: var(--ink);
+  color: var(--cream);
+  border-color: var(--ink);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Action button in tables */
+.btn-detail-action {
+  padding: 5px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  background: var(--cream);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-detail-action:hover {
+  background: var(--rose2);
+  border-color: var(--rose);
 }
 
 .preview-item {
@@ -2377,5 +2481,480 @@ select:focus {
 
     .role-pill {
         display: none
+    }
+}
+
+/* ========================================================
+   AUTHENTICATION, WINNERS PODIUM & REPORT ANALYTICS STYLES
+   (Strictly scoped to preserve existing application design)
+   ======================================================== */
+
+/* --- Topbar Auth Pill --- */
+.auth-nav-container {
+    display: inline-flex;
+    align-items: center;
+    margin-left: 10px;
+}
+
+.user-auth-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: var(--white);
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow-sm);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.user-auth-pill .user-icon {
+    font-size: 14px;
+}
+
+.btn-auth-trigger {
+    background: var(--white);
+    color: var(--ink);
+    border: 1px solid var(--line);
+    padding: 7px 14px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.btn-auth-trigger:hover {
+    background: var(--rose2);
+    border-color: var(--rose);
+}
+
+.btn-logout {
+    background: transparent;
+    color: #a04d5c;
+    border: 0;
+    padding: 2px 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.btn-logout:hover {
+    background: #ffebee;
+}
+
+/* --- Winners' Podium --- */
+.podium-flow-container {
+    width: 100%;
+    margin-top: 10px;
+}
+
+.podium-grid {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 16px;
+    padding: 20px 10px 0;
+    min-height: 230px;
+}
+
+.podium-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 120px;
+}
+
+.podium-user-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin-bottom: 8px;
+    min-height: 60px;
+    justify-content: flex-end;
+}
+
+.podium-crown {
+    font-size: 26px;
+    line-height: 1;
+    margin-bottom: 4px;
+    color: #d97706;
+    animation: crownFloat 2s ease-in-out infinite alternate;
+}
+
+@keyframes crownFloat {
+    from { transform: translateY(0); }
+    to { transform: translateY(-4px); }
+}
+
+.podium-medal {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.podium-name {
+    font-weight: 700;
+    font-size: 14px;
+    max-width: 115px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-top: 2px;
+}
+
+.podium-name.winner-name {
+    font-size: 16px;
+    color: var(--ink);
+}
+
+.podium-pts {
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 600;
+}
+
+.podium-pts.winner-pts {
+    color: #b45309;
+    font-weight: 800;
+}
+
+.podium-pillar {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 10px;
+    border-radius: 12px 12px 0 0;
+    box-shadow: var(--shadow-sm);
+}
+
+.pillar-rank {
+    font-size: 22px;
+    font-weight: 900;
+    line-height: 1;
+}
+
+/* Pillar 1: Gold */
+.podium-gold .pillar-1 {
+    height: 130px;
+    background: linear-gradient(180deg, #fef3c7 0%, #fde68a 100%);
+    border: 2px solid #f59e0b;
+    border-bottom: 0;
+    color: #b45309;
+}
+
+.podium-gold .podium-medal {
+    color: #b45309;
+}
+
+/* Pillar 2: Silver */
+.podium-silver .pillar-2 {
+    height: 95px;
+    background: linear-gradient(180deg, #f3f4f6 0%, #e5e7eb 100%);
+    border: 2px solid #9ca3af;
+    border-bottom: 0;
+    color: #4b5563;
+}
+
+.podium-silver .podium-medal {
+    color: #6b7280;
+}
+
+/* Pillar 3: Bronze */
+.podium-bronze .pillar-3 {
+    height: 65px;
+    background: linear-gradient(180deg, #ffedd5 0%, #fed7aa 100%);
+    border: 2px solid #ea580c;
+    border-bottom: 0;
+    color: #c2410c;
+}
+
+.podium-bronze .podium-medal {
+    color: #c2410c;
+}
+
+.podium-empty {
+    visibility: hidden;
+}
+
+/* --- Results Table --- */
+.leaderboard-table-container {
+    overflow-x: auto;
+    border-radius: 12px;
+    border: 1px solid var(--line);
+    background: var(--white);
+    box-shadow: var(--shadow-sm);
+}
+
+.results-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.results-table th {
+    padding: 10px 14px;
+    text-align: left;
+    font-weight: 700;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--muted);
+    border-bottom: 1px solid var(--line);
+    background: rgba(0, 0, 0, 0.015);
+}
+
+.results-table td {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--line);
+}
+
+.results-table tr:last-child td {
+    border-bottom: 0;
+}
+
+.results-table tr.row-winner {
+    background: #fffbeb;
+}
+
+.results-table tr.row-me {
+    background: #f0fdf4;
+}
+
+.rank-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px 7px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 800;
+    background: #f3f4f6;
+    color: #4b5563;
+}
+
+.rank-badge.rank-1 {
+    background: #fef3c7;
+    color: #b45309;
+    border: 1px solid #fde68a;
+}
+
+.rank-badge.rank-2 {
+    background: #f3f4f6;
+    color: #374151;
+    border: 1px solid #e5e7eb;
+}
+
+.rank-badge.rank-3 {
+    background: #ffedd5;
+    color: #c2410c;
+    border: 1px solid #fed7aa;
+}
+
+.winner-tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    color: #b45309;
+    margin-left: 4px;
+}
+
+.you-tag {
+    font-size: 11px;
+    color: #15803d;
+    font-weight: 700;
+}
+
+/* --- Report Analytics Modal & Grid --- */
+.report-header-banner {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.status-pill {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+}
+
+.status-pill.status-completed {
+    background: #ecfdf5;
+    color: #065f46;
+    border: 1px solid #a7f3d0;
+}
+
+.status-pill.status-active {
+    background: #eff6ff;
+    color: #1e40af;
+    border: 1px solid #bfdbfe;
+}
+
+.report-metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 10px;
+    margin-bottom: 18px;
+}
+
+.metric-card {
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--shadow-sm);
+}
+
+.metric-label {
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+}
+
+.metric-val {
+    font-size: 20px;
+    font-weight: 800;
+    line-height: 1.1;
+    color: var(--ink);
+}
+
+.metric-sub {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Question-Level Analytics Item */
+.qa-item-card {
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px;
+    margin-bottom: 12px;
+    box-shadow: var(--shadow-sm);
+}
+
+.qa-acc-pill {
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.qa-acc-pill.acc-high {
+    background: #ecfdf5;
+    color: #047857;
+}
+
+.qa-acc-pill.acc-mid {
+    background: #fffbeb;
+    color: #b45309;
+}
+
+.qa-acc-pill.acc-low {
+    background: #fef2f2;
+    color: #b91c1c;
+}
+
+.progress-bar-track {
+    width: 100%;
+    height: 7px;
+    background: #e5e7eb;
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+    border-radius: 999px;
+    transition: width 0.3s ease;
+}
+
+.qa-stats-row {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    font-size: 12px;
+    color: var(--muted);
+    padding: 6px 0;
+    border-top: 1px dashed var(--line);
+    border-bottom: 1px dashed var(--line);
+}
+
+.qa-stats-row b {
+    color: var(--ink);
+}
+
+/* Player Question Cards in Details */
+.player-q-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 10px;
+    margin-top: 8px;
+}
+
+.player-q-card {
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 10px 12px;
+}
+
+.player-q-card.q-correct {
+    border-left: 4px solid #10b981;
+}
+
+.player-q-card.q-incorrect {
+    border-left: 4px solid #ef4444;
+}
+
+.player-q-card.q-unanswered {
+    border-left: 4px solid #f59e0b;
+}
+
+/* Full Page Report View */
+.report-page-wrapper {
+    animation: fadeIn 0.25s ease-out;
+}
+
+.q-time-chip {
+    transition: background 0.15s ease;
+}
+
+.q-time-chip:hover {
+    background: rgba(217, 143, 159, 0.2) !important;
+}
+
+@media (max-width: 768px) {
+    .report-page-wrapper {
+        margin: 16px auto !important;
+        padding: 0 12px 40px !important;
+    }
+    .report-header-banner {
+        padding: 16px 18px !important;
+    }
+    .report-metrics-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
     }
 }

@@ -7,9 +7,43 @@ The platform supports a host-controlled quiz experience, live question delivery,
 ## Live Demo Link: 
 https://realtime-quiz-platform-w0c4.onrender.com/
 
-## ✨ Features
+## ✦ New Enhanced Features
 
-### 🎮 Real-Time Multiplayer Gameplay
+### 👤 Dedicated Authentication & Account Management
+- Dedicated, fully styled standalone pages: `/login` (`login.html`) and `/register` (`register.html`), replacing modals with an accessible, cohesive experience matching Quiz Arena's warm cream and rose aesthetic.
+- Secure user registration and login with display name, email normalization, and password validation.
+- Passwords hashed using bcrypt (10 rounds) — zero plaintext storage.
+- Database-backed session tokens with 7-day expiration and automated TTL indexes in MongoDB.
+- HTTP-only session cookies with fallback Bearer and header token support.
+- Generic error messages for login failures to prevent account enumeration.
+- In-memory rate limiting to protect against brute-force attacks.
+
+### 🍃 Persistent MongoDB Database (via Mongoose)
+- Database engine: **MongoDB with Mongoose schemas and models** replacing legacy SQLite.
+- Dedicated connection module (`JUI_TAWDE/config/database.js`) with sanitized URI logging, reconnection handling, and clean shutdown hooks.
+- Schema entities: `User`, `Session` (with TTL index), `QuizTemplate`, `QuizSession`, `QuizParticipant`, `QuestionResult` (with compound uniqueness indexes preventing duplicate answers).
+- Immutable snapshot of quiz questions, options, correct answers, and explanations stored with each session.
+- Server-authoritative timestamps for all question start and answer arrival times.
+- Zero data loss: All historical sessions, answers, and reports persist across server restarts.
+
+### ♛ Winners' Podium & Full Leaderboard
+- Stage 1: Top-3 Winners' Podium with clear visual hierarchy (1st Gold in center with ♛ crown, 2nd Silver on left with ★ star, 3rd Bronze on right with ★ star).
+- Stage 2: Complete participant leaderboard table with ranks, scores, accuracy percentage, and average response times.
+- Stage 3: Direct report access action for hosts to launch comprehensive session analytics.
+
+### 📊 Automatic Quiz Reports & Player Analytics
+- Complete session report generated idempotently upon quiz completion.
+- Host-level diagnostic overview: overall accuracy, average score, average response time, highest score, winner.
+- Question-level diagnostics: correctness percentage, answer counts, unanswered counts, and most common incorrect options.
+- Individual participant analysis: toggleable question-by-question breakdown showing selected answers, correct answers, response times, points, and explanations.
+- Role-based authorization: hosts access full reports; participants access their own question breakdowns with other participants' details safely redacted; unauthorized access rejected with 403 Forbidden.
+
+### 📜 Account History & Reports Dashboard
+- Accessible via the **History & Reports** tab on the host interface.
+- Hosted Quizzes: browse all past sessions, search by title, and launch full interactive analytics reports.
+- Played Quizzes: track personal performance across all games played, with scores, accuracy, and rank.
+
+## 🎮 Real-Time Multiplayer Gameplay
 - Create a quiz room with a unique room PIN.
 - Allow participants to join using the room PIN.
 - Start and manage the quiz as the host.
@@ -244,49 +278,83 @@ npm install tesseract.js
 
 Only install packages that are compatible with the existing project and its runtime.
 
-### 3. Configure Environment Variables
+### 3. Configure Environment Variables & MongoDB
 
-Create a `.env` file in the project root if one does not already exist.
-
-Example:
+Create a `.env` file in `JUI_TAWDE/` (or repository root) if one does not already exist. A template is provided in `.env.example`:
 
 ```env
-PORT=3000
+PORT=5000
+MONGODB_URI=mongodb://127.0.0.1:27017/quiz_arena
+SESSION_SECRET=replace_with_a_long_random_secret_in_production
 ```
 
-Add other variables only if the actual application requires them. For example, an optional AI-assisted document parser may require a server-side API key:
+#### Option A — MongoDB Atlas (Cloud Hosted)
+1. Sign in to your [MongoDB Atlas](https://www.mongodb.com/atlas) account and create or select a cluster.
+2. In **Database Access**, create a database user with read/write privileges on your target database.
+3. In **Network Access**, configure IP access (e.g. add your current IP address or `0.0.0.0/0` for cloud deployment).
+4. In your cluster dashboard, click **Connect** > **Drivers** (Node.js) to retrieve your connection string.
+5. In your `.env` file, set `MONGODB_URI` to your connection string:
+   ```env
+   MONGODB_URI=mongodb+srv://<username>:<password>@cluster0.xxxx.mongodb.net/quiz_arena?retryWrites=true&w=majority
+   ```
+6. Start the server and check the console for `[Database] MongoDB connected successfully to: mongodb+srv://...`.
 
-```env
-LLM_API_KEY=your_api_key_here
+#### Option B — Local MongoDB Community Server
+1. Install MongoDB Community Server:
+   - **macOS (Homebrew):** `brew tap mongodb/brew && brew install mongodb-community`
+   - **Linux (Ubuntu/Debian):** `sudo apt-get install -y mongodb-org`
+   - **Windows:** Download from MongoDB Download Center and run the MSI installer.
+2. Start the MongoDB daemon:
+   ```bash
+   # macOS
+   brew services start mongodb-community
+   # or run directly:
+   mongod --config /opt/homebrew/etc/mongod.conf
+   ```
+3. Set your connection URI in `.env`:
+   ```env
+   MONGODB_URI=mongodb://127.0.0.1:27017/quiz_arena
+   ```
+4. Start the server and verify connection output.
+
+> **Security Note:** Never commit `.env` or database credentials to git. The `.env` file is excluded via `.gitignore`.
+
+### 4. (Optional) Migrate Legacy SQLite Data to MongoDB
+
+If upgrading from an existing installation with historical data in `JUI_TAWDE/data/quiz_platform.db`:
+
+```bash
+node JUI_TAWDE/scripts/migrateSqliteToMongo.js
 ```
 
-Replace this placeholder with a valid key only if the chosen AI provider integration is implemented.
+This automated migration script:
+- Safely reads existing users, active sessions, quiz sessions, participants, and question results.
+- Preserves UUID keys, bcrypt password hashes, and historical room PINs.
+- Is idempotent (can be safely run multiple times without duplicating entries).
+- Automatically created a backup at `JUI_TAWDE/data/quiz_platform.db.bak`.
 
-**Security:** Never commit real API keys, credentials, or secrets to GitHub. Add `.env` to `.gitignore` and provide a `.env.example` file containing placeholders instead.
+### 5. Start the Application
 
-### 4. Start the Application
-
-If `package.json` defines a `start` script:
+Start the development server:
 
 ```bash
 npm start
+# or from JUI_TAWDE:
+node JUI_TAWDE/server.js
 ```
 
-Alternatively, if the server is started directly through `server.js`:
+### 6. Open the Application
 
-```bash
-node server.js
-```
-
-Use the command supported by the actual project configuration.
-
-### 5. Open the Application
-
-If the server uses port `3000`, open:
+Open your browser to:
 
 ```text
-http://localhost:3000
+http://localhost:5000
 ```
+- Homepage: `http://localhost:5000/`
+- Dedicated Login: `http://localhost:5000/login` (`/login.html`)
+- Dedicated Register: `http://localhost:5000/register` (`/register.html`)
+- Host Dashboard: `http://localhost:5000/host.html`
+- Player Arena: `http://localhost:5000/player.html`
 
 If the application uses a different port, use the URL printed by the server when it starts.
 
@@ -344,26 +412,38 @@ Leaderboard and Final Results
 
 The host's saved quiz library remains in IndexedDB, while the selected active quiz is transferred to the server for the multiplayer session. Active game state can remain in memory, consistent with the existing architecture.
 
-## 🧪 Testing Checklist
+## 🧪 Automated Testing
 
-Before considering a release ready, verify the following:
+Run the full end-to-end automated test suite:
 
-- [ ] The server starts successfully.
-- [ ] The host can create a room and generate a PIN.
-- [ ] Participants can join the correct room.
-- [ ] A default-question quiz runs successfully.
-- [ ] The host can create a custom quiz manually.
-- [ ] Question and answer validation works correctly.
-- [ ] Supported documents can be imported.
-- [ ] Extracted questions can be reviewed and corrected.
-- [ ] Saved quizzes remain available after refreshing the host page.
-- [ ] Participants receive the same questions in the correct order.
-- [ ] Correct answers remain hidden until the reveal.
-- [ ] Both host and participants can see explanations after the reveal.
-- [ ] Timers and scoring work correctly.
-- [ ] The leaderboard and final winner are displayed correctly.
-- [ ] Different rooms remain isolated.
-- [ ] Existing UI styling and default game functionality remain unchanged.
+```bash
+npm test
+```
+
+The test runner (`tests/runAllTests.js`) automatically executes and validates 39 comprehensive tests across 5 categories:
+
+1. **Quiz Schema & Validation Tests**: well-formed schemas, missing fields, option counts, sanitized structures.
+2. **Document Parser & Extraction Tests**: `.txt`, `.md`, answer keys, `.csv`, `.xlsx`, `.docx`, `.pdf`, `.json`.
+3. **Multiplayer Socket & Explanation Tests**: isolated concurrent rooms, explanations on both host and player screens, default quiz regression.
+4. **HTTP API Integration Tests**: `/health`, `/api/quiz/default`, `/api/quiz/validate`, `/api/quiz/parse-file`.
+5. **Authentication, Persistent History & Podium Tests**:
+   - Registration, email normalization, duplicate email rejection.
+   - Secure bcrypt password hashing verification (zero plaintext storage).
+   - Login, generic 401 error on bad credentials, session token persistence.
+   - Gameplay session recording with server-side authoritative timestamps.
+   - Unanswered question tracking on timer expiration.
+   - Top-3 winners' podium emission on `quiz:ended`.
+   - Complete session analytics report verification (`/api/reports/:sessionId`).
+   - Strict authorization and privacy enforcement (unauthorized / unrelated users rejected with 403; participant privacy redaction).
+   - Hosted history (`/api/history/hosted`) and played history (`/api/history/played`).
+   - Direct database persistence verification in MongoDB via Mongoose.
+   - Secure logout and session invalidation.
+
+```text
+==================================================
+ALL TESTS COMPLETED: 39/39 PASSED
+==================================================
+```
 
 ## 🚀 Future Enhancements
 

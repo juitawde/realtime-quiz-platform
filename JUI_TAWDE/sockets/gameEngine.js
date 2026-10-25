@@ -1,28 +1,54 @@
 const questions = require("../data/questions.json");
+const { recordAnswerResult, recordUnansweredForQuestion, finalizeSession } = require("../services/sessionService");
 
-function calculateScore(isCorrect, timeTakenMs, totalTimeLimitMs = 15000) {
+function calculateScore(isCorrect, elapsedMs, timeLimitMs) {
   if (!isCorrect) return 0;
-  const safeTime = Math.min(Math.max(Number(timeTakenMs) || 0, 0), totalTimeLimitMs);
-  const timeRemaining = Math.max(0, totalTimeLimitMs - safeTime);
-  const speedBonus = Math.round((timeRemaining / totalTimeLimitMs) * 500);
-  return 500 + speedBonus;
+  const speedRatio = Math.max(0, (timeLimitMs - elapsedMs) / timeLimitMs);
+  return Math.round(500 + 500 * speedRatio);
 }
 
 function leaderboard(room) {
   return [...room.players.values()]
     .sort((a, b) => b.score - a.score || a.name.localeCompare(b.name))
-    .map((p, i) => ({ rank: i + 1, name: p.name, score: p.score }));
+    .map((p, idx) => ({
+      rank: idx + 1,
+      name: p.name,
+      score: p.score
+    }));
 }
 
-function startQuestion(io, room) {
+async function startQuestion(io, room) {
   const roomQuestions = room.questions || questions;
+
   room.currentIndex++;
   room.answered = new Set();
 
   if (room.currentIndex >= roomQuestions.length) {
     const finalRanks = leaderboard(room);
     const winner = finalRanks[0] || null;
-    io.to(room.roomId).emit("quiz:ended", { winner, finalRanks });
+
+    if (room.dbSessionId && !room.finalized) {
+      room.finalized = true;
+      try {
+        await finalizeSession(room.dbSessionId);
+      } catch (err) {
+        console.error("Failed to finalize session in DB:", err);
+      }
+    }
+
+    const podium = finalRanks.slice(0, 3).map((p, idx) => ({
+      rank: idx + 1,
+      name: p.name,
+      score: p.score,
+      isWinner: idx === 0
+    }));
+
+    io.to(room.roomId).emit("quiz:ended", {
+      winner,
+      finalRanks,
+      podium,
+      sessionId: room.dbSessionId
+    });
     room.active = false;
     return;
   }
@@ -44,11 +70,32 @@ function startQuestion(io, room) {
   room.timer = setTimeout(() => timeUp(io, room), timeLimitSeconds * 1000);
 }
 
-function timeUp(io, room) {
+async function timeUp(io, room) {
   if (!room.active) return;
   const roomQuestions = room.questions || questions;
   const q = roomQuestions[room.currentIndex];
   if (!q) return;
+
+  const timeLimitMs = (q.timeLimitSeconds || 15) * 1000;
+
+  // Record unanswered questions for participants who did not answer
+  if (room.dbSessionId) {
+    try {
+      await recordUnansweredForQuestion({
+        sessionId: room.dbSessionId,
+        questionIndex: room.currentIndex,
+        questionText: q.question,
+        correctOption: q.correctOption,
+        correctText: q.options?.[q.correctOption] || "",
+        explanation: q.explanation || "No explanation provided.",
+        timeLimitMs,
+        participantMap: room.players,
+        answeredSocketIds: room.answered
+      });
+    } catch (err) {
+      console.error("Failed to record unanswered question:", err);
+    }
+  }
 
   io.to(room.roomId).emit("question:time_up", {
     correctOption: q.correctOption,
@@ -69,7 +116,7 @@ function registerGameHandlers(io, rooms) {
       }
     });
 
-    socket.on("answer:submit", ({ pin, selectedOption, timeTakenMs } = {}, ack) => {
+    socket.on("answer:submit", async ({ pin, selectedOption, timeTakenMs } = {}, ack) => {
       const room = rooms.get(String(pin));
       if (!room || !room.active || socket.data.role !== "player") {
         return ack?.({ ok: false, message: "Answer rejected." });
@@ -97,6 +144,28 @@ function registerGameHandlers(io, rooms) {
       player.score += score;
       room.answered.add(socket.id);
 
+      // Record to MongoDB
+      if (room.dbSessionId && player?.dbParticipantId) {
+        try {
+          await recordAnswerResult({
+            sessionId: room.dbSessionId,
+            participantId: player.dbParticipantId,
+            questionIndex: room.currentIndex,
+            questionText: q.question,
+            selectedOption: Number(selectedOption),
+            selectedText: q.options?.[Number(selectedOption)] || "",
+            correctOption: q.correctOption,
+            correctText: q.options?.[q.correctOption] || "",
+            isCorrect,
+            responseTimeMs: elapsed,
+            pointsEarned: score,
+            explanation: q.explanation || ""
+          });
+        } catch (err) {
+          console.error("Failed to record answer to DB:", err);
+        }
+      }
+
       ack?.({ ok: true, isCorrect, score, timeTakenMs: elapsed });
       socket.emit("answer:result", { isCorrect, score, timeTakenMs: elapsed });
       io.to(room.roomId).emit("leaderboard:update", { leaderboard: leaderboard(room) });
@@ -106,7 +175,15 @@ function registerGameHandlers(io, rooms) {
         timeUp(io, room);
       }
     });
+
+    socket.on("quiz:next", ({ pin } = {}) => {
+      const room = rooms.get(String(pin));
+      if (room?.hostId === socket.id && room.active) {
+        clearTimeout(room.timer);
+        startQuestion(io, room);
+      }
+    });
   });
 }
 
-module.exports = { registerGameHandlers, calculateScore };
+module.exports = { registerGameHandlers };

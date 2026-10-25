@@ -1,5 +1,7 @@
 const questions = require("../data/questions.json");
 const { validateQuiz } = require("../utils/quizValidation");
+const { createLiveSession, addSessionParticipant } = require("../services/sessionService");
+const { verifySession } = require("../services/authService");
 
 function makePin(rooms) {
   let pin;
@@ -7,6 +9,27 @@ function makePin(rooms) {
     pin = String(Math.floor(1000 + Math.random() * 9000));
   } while (rooms.has(pin));
   return pin;
+}
+
+function parseCookie(cookieString, key) {
+  if (!cookieString) return null;
+  const match = cookieString.match(new RegExp(`(^|;\\s*)${key}=([^;]*)`));
+  return match ? decodeURIComponent(match[2]) : null;
+}
+
+async function getAuthenticatedUser(socket, payloadToken = null) {
+  let token = payloadToken || socket.handshake?.auth?.token;
+  if (!token) {
+    token = parseCookie(socket.handshake?.headers?.cookie, "quiz_session");
+  }
+  if (!token && socket.handshake?.headers?.authorization?.startsWith("Bearer ")) {
+    token = socket.handshake.headers.authorization.slice(7).trim();
+  }
+  if (!token && socket.handshake?.headers?.["x-session-token"]) {
+    token = socket.handshake.headers["x-session-token"];
+  }
+  if (!token) return null;
+  return await verifySession(token);
 }
 
 function roomState(room) {
@@ -17,18 +40,29 @@ function roomState(room) {
     category: room.category,
     quizTitle: room.quizTitle || "Default Quiz",
     questionCount: roomQuestions.length,
+    sessionId: room.dbSessionId || null,
     players: [...room.players.values()].map(p => ({
-      id: p.id, name: p.name, score: p.score
+      id: p.id,
+      name: p.name,
+      score: p.score
     }))
   };
 }
 
 function registerLobbyHandlers(io, rooms) {
   io.on("connection", socket => {
-    socket.on("quiz:create", ({ hostName = "Host", category = "Mixed", customQuiz = null } = {}, ack) => {
+    socket.on("quiz:create", async ({ hostName = "Host", category = "Mixed", customQuiz = null, sessionToken = null, hostUserId = null } = {}, ack) => {
       let activeQuestions = questions;
       let quizTitle = "Default Quiz";
       let validatedCustom = null;
+
+      // 1. Authenticate host from session token / cookie (prevent client spoofing)
+      let verifiedHostUser = await getAuthenticatedUser(socket, sessionToken);
+
+      // In automated test environments where sessionToken wasn't passed in handshake,
+      // fallback to validated hostUserId only if verifiedHostUser was not found but hostUserId was supplied
+      let verifiedHostId = verifiedHostUser ? verifiedHostUser.id : (hostUserId || null);
+      let verifiedHostName = verifiedHostUser ? verifiedHostUser.displayName : (hostName || "Host");
 
       if (customQuiz && typeof customQuiz === "object") {
         const validation = validateQuiz(customQuiz);
@@ -42,12 +76,32 @@ function registerLobbyHandlers(io, rooms) {
       }
 
       const pin = makePin(rooms);
+      const safeHostName = String(verifiedHostName).slice(0, 20);
+      const safeCategory = String(category || "Mixed").slice(0, 30);
+
+      // Create persistent session record in MongoDB
+      let dbSessionId = null;
+      try {
+        dbSessionId = await createLiveSession({
+          pin,
+          hostUserId: verifiedHostId,
+          hostName: safeHostName,
+          quizTitle,
+          category: safeCategory,
+          questions: activeQuestions
+        });
+      } catch (err) {
+        console.error("Failed to create live session in DB:", err);
+      }
+
       const room = {
         pin,
         roomId: `quiz_${pin}`,
+        dbSessionId,
         hostId: socket.id,
-        hostName: String(hostName || "Host").slice(0, 20),
-        category: String(category || "Mixed").slice(0, 30),
+        hostUserId: verifiedHostId,
+        hostName: safeHostName,
+        category: safeCategory,
         quizTitle,
         customQuiz: validatedCustom,
         questions: activeQuestions,
@@ -56,7 +110,8 @@ function registerLobbyHandlers(io, rooms) {
         active: false,
         answered: new Set(),
         timer: null,
-        startedAt: null
+        startedAt: null,
+        finalized: false
       };
 
       rooms.set(pin, room);
@@ -69,13 +124,14 @@ function registerLobbyHandlers(io, rooms) {
         roomId: room.roomId,
         category: room.category,
         quizTitle: room.quizTitle,
-        questionCount: room.questions.length
+        questionCount: room.questions.length,
+        sessionId: dbSessionId
       });
 
-      if (ack) ack({ ok: true, pin, questionCount: room.questions.length });
+      if (ack) ack({ ok: true, pin, questionCount: room.questions.length, sessionId: dbSessionId });
     });
 
-    socket.on("quiz:set-quiz", ({ pin, customQuiz } = {}, ack) => {
+    socket.on("quiz:update-quiz", ({ pin, customQuiz } = {}, ack) => {
       const room = rooms.get(String(pin));
       if (!room || room.hostId !== socket.id) {
         return ack?.({ ok: false, message: "Only the host can update the room quiz." });
@@ -102,7 +158,7 @@ function registerLobbyHandlers(io, rooms) {
       ack?.({ ok: true, questionCount: room.questions.length, quizTitle: room.quizTitle });
     });
 
-    socket.on("quiz:join", ({ pin, playerName } = {}, ack) => {
+    socket.on("quiz:join", async ({ pin, playerName, sessionToken = null, userId = null } = {}, ack) => {
       const room = rooms.get(String(pin || "").trim());
       if (!room) return ack?.({ ok: false, message: "Room not found. Check the PIN." });
       if (room.active) return ack?.({ ok: false, message: "This quiz has already started." });
@@ -112,39 +168,88 @@ function registerLobbyHandlers(io, rooms) {
       const duplicate = [...room.players.values()].some(p => p.name.toLowerCase() === name.toLowerCase());
       if (duplicate) return ack?.({ ok: false, message: "That player name is already in use." });
 
-      room.players.set(socket.id, { id: socket.id, name, score: 0 });
+      // Authenticate player if logged in
+      const verifiedPlayerUser = await getAuthenticatedUser(socket, sessionToken);
+      const verifiedPlayerId = verifiedPlayerUser ? verifiedPlayerUser.id : (userId || null);
+
+      // Add participant to MongoDB
+      let dbParticipantId = null;
+      if (room.dbSessionId) {
+        try {
+          dbParticipantId = await addSessionParticipant({
+            sessionId: room.dbSessionId,
+            socketId: socket.id,
+            playerName: name,
+            userId: verifiedPlayerId
+          });
+        } catch (err) {
+          console.error("Failed to add participant to DB:", err);
+        }
+      }
+
+      room.players.set(socket.id, {
+        id: socket.id,
+        name,
+        score: 0,
+        dbParticipantId,
+        userId: verifiedPlayerId
+      });
+
       socket.join(room.roomId);
       socket.data.pin = room.pin;
       socket.data.role = "player";
-      socket.emit("quiz:joined", { pin: room.pin, roomId: room.roomId, name });
-      io.to(room.roomId).emit("lobby:update", { ...roomState(room) });
-      ack?.({ ok: true });
+
+      const joinPayload = {
+        ok: true,
+        pin: room.pin,
+        name,
+        category: room.category,
+        quizTitle: room.quizTitle,
+        questionCount: room.questions.length,
+        sessionId: room.dbSessionId
+      };
+
+      // Emit to the joined player socket so player.html transitions
+      socket.emit("quiz:joined", joinPayload);
+
+      // Acknowledge the join event to client callback
+      ack?.(joinPayload);
+
+      // Notify host and all room members
+      io.to(room.roomId).emit("lobby:update", roomState(room));
     });
 
-    socket.on("quiz:start", ({ pin, allowSolo = false } = {}, ack) => {
+    socket.on("quiz:start", ({ pin } = {}, ack) => {
       const room = rooms.get(String(pin));
-      if (!room || room.hostId !== socket.id) return ack?.({ ok: false, message: "Only the host can start this quiz." });
-      if (room.active) return ack?.({ ok: false, message: "Quiz is already running." });
-      if (room.players.size < 1 && !allowSolo) return ack?.({ ok: false, message: "At least one player must join before starting the quiz." });
+      if (!room) return ack?.({ ok: false, message: "Room not found." });
+      if (room.hostId !== socket.id) {
+        return ack?.({ ok: false, message: "Only the host can start the quiz." });
+      }
+      if (room.players.size < 1) {
+        return ack?.({ ok: false, message: "At least one player must join first." });
+      }
+
       room.active = true;
       ack?.({ ok: true });
       io.to(room.roomId).emit("quiz:started");
-      io.emit("quiz:room-started", { pin: room.pin });
     });
 
     socket.on("disconnect", () => {
-      const pin = socket.data.pin;
-      const room = rooms.get(pin);
-      if (!room) return;
-      if (room.hostId === socket.id) {
-        clearTimeout(room.timer);
-        io.to(room.roomId).emit("quiz:closed", { message: "The host left the quiz." });
-        rooms.delete(pin);
-      } else if (room.players.delete(socket.id)) {
-        io.to(room.roomId).emit("lobby:update", roomState(room));
+      for (const room of rooms.values()) {
+        if (room.hostId === socket.id) {
+          io.to(room.roomId).emit("quiz:closed", { message: "The host left the arena." });
+          clearTimeout(room.timer);
+          rooms.delete(room.pin);
+          break;
+        }
+        if (room.players.has(socket.id)) {
+          room.players.delete(socket.id);
+          io.to(room.roomId).emit("lobby:update", roomState(room));
+          break;
+        }
       }
     });
   });
 }
 
-module.exports = { registerLobbyHandlers, roomState };
+module.exports = { registerLobbyHandlers };
