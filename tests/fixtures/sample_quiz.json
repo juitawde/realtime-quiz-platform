@@ -1,0 +1,29 @@
+{
+  "title": "Computer Architecture Trivia",
+  "questions": [
+    {
+      "question": "Which component is considered the brain of the computer?",
+      "options": [
+        "RAM",
+        "CPU",
+        "Hard Drive",
+        "GPU"
+      ],
+      "correctOption": 1,
+      "explanation": "The Central Processing Unit (CPU) executes instructions.",
+      "timeLimitSeconds": 15
+    },
+    {
+      "question": "Which memory is volatile?",
+      "options": [
+        "ROM",
+        "RAM",
+        "Flash SSD",
+        "Optical Disc"
+      ],
+      "correctOption": 1,
+      "explanation": "RAM loses its stored data when power is turned off.",
+      "timeLimitSeconds": 20
+    }
+  ]
+}

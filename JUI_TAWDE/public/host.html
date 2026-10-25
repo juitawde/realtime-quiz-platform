@@ -15,8 +15,21 @@
       window.location.href = "/";
     }
   </script>
-  <header class="topbar"><a href="/" class="logo">✦ QUIZ ARENA</a><span class="role-pill">HOST DASHBOARD</span></header>
+  <header class="topbar">
+    <a href="/" class="logo">✦ QUIZ ARENA</a>
+    <span class="role-pill">HOST DASHBOARD</span>
+  </header>
+
   <main class="dashboard">
+    <!-- Mode Navigation Tabs -->
+    <nav class="tab-bar" id="hostNavTabs">
+      <button class="tab-btn active" id="tabBtnDefault" type="button" data-tab="createView">Default Quiz</button>
+      <button class="tab-btn" id="tabBtnBuilder" type="button" data-tab="builderView">Manual Creator</button>
+      <button class="tab-btn" id="tabBtnImport" type="button" data-tab="importView">Import Document</button>
+      <button class="tab-btn" id="tabBtnSaved" type="button" data-tab="savedView">Saved Quizzes</button>
+    </nav>
+
+    <!-- 1. Default Quiz View (Original Host Setup) -->
     <section id="createView" class="panel narrow">
       <p class="eyebrow">SET UP YOUR BATTLE</p>
       <h1>Create Quiz Room</h1>
@@ -31,6 +44,149 @@
       <button id="createBtn" class="primary">Create Quiz Room →</button>
       <p id="createMsg" class="msg"></p>
     </section>
+
+    <!-- 2. Manual Custom Quiz Builder View -->
+    <section id="builderView" class="panel builder-panel hidden">
+      <p class="eyebrow">CUSTOM QUIZ CREATOR</p>
+      <h1>Create Custom Quiz</h1>
+      <p class="muted">Design multiple-choice questions, select the correct answer, and set explanations.</p>
+
+      <div style="display:grid; grid-template-columns: 2fr 1fr; gap:16px;">
+        <label>Quiz Title
+          <input id="builderTitle" placeholder="e.g. World History Trivia" maxlength="100">
+        </label>
+        <label>Desired Question Count
+          <div style="display:flex; gap:8px;">
+            <input id="builderCount" type="number" min="1" max="50" value="3">
+            <button id="builderSyncCountBtn" class="btn-secondary btn-small" type="button" title="Sync question list to this count">Set</button>
+          </div>
+        </label>
+      </div>
+
+      <div id="builderQuestionsList"></div>
+
+      <div style="margin-top:16px;">
+        <button id="builderAddQBtn" class="btn-secondary" type="button">+ Add Question</button>
+      </div>
+
+      <div class="action-row">
+        <button id="builderPreviewBtn" class="btn-secondary" type="button">Preview Quiz</button>
+        <button id="builderSaveBtn" class="btn-secondary" type="button">Save to My Quizzes</button>
+        <button id="builderCreateRoomBtn" class="primary" type="button">Create Room With This Quiz →</button>
+      </div>
+      <p id="builderMsg" class="msg"></p>
+    </section>
+
+    <!-- 3. Document Import View -->
+    <section id="importView" class="panel builder-panel hidden">
+      <p class="eyebrow">DOCUMENT IMPORT</p>
+      <h1>Import Questions from File</h1>
+      <p class="muted">Extract questions automatically from PDF, Word (DOCX), Excel (XLSX/XLS), CSV, Plain Text, Markdown, or JSON.</p>
+
+      <div id="fileDropZone" class="drop-zone">
+        <div class="drop-icon">📄</div>
+        <p><b>Choose a file or drag & drop it here</b></p>
+        <p class="muted" style="font-size:13px;" id="selectedFileName">Supports .pdf, .docx, .xlsx, .xls, .csv, .txt, .md, .json</p>
+        <input type="file" id="quizFileInput" accept=".pdf,.docx,.xlsx,.xls,.csv,.txt,.md,.json,.png,.jpg,.jpeg,.webp" style="display:none;">
+        <div class="format-pills">
+          <span class="format-pill">PDF</span>
+          <span class="format-pill">DOCX</span>
+          <span class="format-pill">XLSX</span>
+          <span class="format-pill">CSV</span>
+          <span class="format-pill">TXT</span>
+          <span class="format-pill">Markdown</span>
+          <span class="format-pill">JSON</span>
+        </div>
+      </div>
+
+      <div style="margin: 14px 0;">
+        <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+          <input type="checkbox" id="aiToggle" style="width:auto; margin:0;">
+          <span>Optional: AI-assisted structuring for complex or non-standard documents</span>
+        </label>
+      </div>
+
+      <!-- Multi-sheet selector for Excel -->
+      <div id="sheetSelectSection" class="hidden mapping-box">
+        <label>Select Worksheet:
+          <select id="sheetSelectDropdown"></select>
+        </label>
+      </div>
+
+      <!-- Column mapping fallback for spreadsheet imports -->
+      <div id="columnMappingSection" class="hidden mapping-box">
+        <h3>Column Mapping</h3>
+        <p class="muted" style="font-size:13px;">Confirm which columns correspond to Question, Options, and Answers:</p>
+        <div class="mapping-grid">
+          <label>Question Column <select id="mapColQuestion"></select></label>
+          <label>Option A <select id="mapColOptA"></select></label>
+          <label>Option B <select id="mapColOptB"></select></label>
+          <label>Option C <select id="mapColOptC"></select></label>
+          <label>Option D <select id="mapColOptD"></select></label>
+          <label>Correct Answer <select id="mapColAnswer"></select></label>
+          <label>Explanation <select id="mapColExplanation"></select></label>
+        </div>
+        <button id="applyMappingBtn" class="btn-secondary btn-small" style="margin-top:14px;" type="button">Apply Column Mapping</button>
+      </div>
+
+      <div class="action-row">
+        <button id="extractFileBtn" class="primary" type="button">Extract & Review Questions →</button>
+      </div>
+      <p id="importMsg" class="msg"></p>
+    </section>
+
+    <!-- 4. Review & Refine Extracted Questions View -->
+    <section id="reviewView" class="panel builder-panel hidden">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+        <div>
+          <p class="eyebrow">STEP 2 OF 2: REVIEW & REFINE</p>
+          <h1>Review Extracted Questions</h1>
+        </div>
+        <div id="reviewBadgeCount" class="count">0 Questions</div>
+      </div>
+      <p class="muted" id="reviewSubtitle">Verify extracted question text, options, correct answers, and explanations before starting.</p>
+
+      <div style="display:grid; grid-template-columns: 2fr 1fr; gap:16px;">
+        <label>Quiz Title
+          <input id="reviewTitle" maxlength="100">
+        </label>
+        <label>Desired Question Count
+          <div style="display:flex; gap:8px;">
+            <input id="reviewCount" type="number" min="1" max="50">
+            <button id="reviewSyncCountBtn" class="btn-secondary btn-small" type="button">Set</button>
+          </div>
+        </label>
+      </div>
+
+      <div id="reviewQuestionsList"></div>
+
+      <div style="margin-top:16px;">
+        <button id="reviewAddQBtn" class="btn-secondary" type="button">+ Add Question</button>
+      </div>
+
+      <div class="action-row">
+        <button id="reviewPreviewBtn" class="btn-secondary" type="button">Preview Quiz</button>
+        <button id="reviewSaveBtn" class="btn-secondary" type="button">Save to My Quizzes</button>
+        <button id="reviewCreateRoomBtn" class="primary" type="button">Create Room With This Quiz →</button>
+      </div>
+      <p id="reviewMsg" class="msg"></p>
+    </section>
+
+    <!-- 5. Saved Quizzes Library View -->
+    <section id="savedView" class="panel builder-panel hidden">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <p class="eyebrow">LOCAL QUIZ LIBRARY</p>
+          <h1>Saved Quizzes</h1>
+        </div>
+        <button id="savedNewQuizBtn" class="btn-secondary btn-small" type="button">+ Create New Quiz</button>
+      </div>
+      <p class="muted">Quizzes saved persistently in your browser on this device.</p>
+      <div id="savedQuizzesList" style="margin-top:20px;"></div>
+      <p id="savedMsg" class="msg"></p>
+    </section>
+
+    <!-- 6. Multiplayer Room Lobby View -->
     <section id="lobbyView" class="hidden">
       <div class="room-head">
         <div>
@@ -56,6 +212,8 @@
         </div>
       </div>
     </section>
+
+    <!-- 7. Active Game View -->
     <section id="gameView" class="hidden">
       <div class="game-top">
         <div><span id="qProgress" class="eyebrow">QUESTION</span>
@@ -75,14 +233,38 @@
         <div id="hostLeaderboard"></div>
       </div>
     </section>
+
+    <!-- 8. Quiz Ended / Results View -->
     <section id="endView" class="hidden panel end-card">
       <div class="trophy">♛</div>
       <p class="eyebrow">QUIZ COMPLETE</p>
       <h1 id="winnerText"></h1>
       <div id="finalRanks"></div><a class="secondary" href="/host.html">New Quiz</a>
     </section>
+
+    <!-- 9. Preview Modal -->
+    <div id="previewModal" class="modal-overlay hidden">
+      <div class="modal-content">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px;">
+          <div>
+            <p class="eyebrow">QUIZ PREVIEW</p>
+            <h2 id="modalPreviewTitle" style="margin:0;">Preview</h2>
+          </div>
+          <button id="modalCloseBtn" class="btn-icon btn-danger" type="button">✕</button>
+        </div>
+        <div id="modalPreviewQuestions"></div>
+        <div style="text-align:right; margin-top:18px;">
+          <button id="modalCloseBtn2" class="btn-secondary" type="button">Close Preview</button>
+        </div>
+      </div>
+    </div>
   </main>
+
   <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/quizValidation.js"></script>
+  <script src="/js/quizParser.js"></script>
+  <script src="/js/quizStorage.js"></script>
+  <script src="/js/quizImporter.js"></script>
   <script src="/app.js"></script>
   <script>QuizApp.initHost();</script>
 </body>

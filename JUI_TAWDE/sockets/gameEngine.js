@@ -15,10 +15,11 @@ function leaderboard(room) {
 }
 
 function startQuestion(io, room) {
+  const roomQuestions = room.questions || questions;
   room.currentIndex++;
   room.answered = new Set();
 
-  if (room.currentIndex >= questions.length) {
+  if (room.currentIndex >= roomQuestions.length) {
     const finalRanks = leaderboard(room);
     const winner = finalRanks[0] || null;
     io.to(room.roomId).emit("quiz:ended", { winner, finalRanks });
@@ -26,27 +27,32 @@ function startQuestion(io, room) {
     return;
   }
 
-  const q = questions[room.currentIndex];
+  const q = roomQuestions[room.currentIndex];
   room.startedAt = Date.now();
+  const timeLimitSeconds = q.timeLimitSeconds || 15;
+
   const payload = {
     questionIndex: room.currentIndex + 1,
-    totalQuestions: questions.length,
+    totalQuestions: roomQuestions.length,
     question: q.question,
     options: q.options,
-    timeLimitSeconds: 15
+    timeLimitSeconds
   };
   io.to(room.roomId).emit("question:start", payload);
 
   clearTimeout(room.timer);
-  room.timer = setTimeout(() => timeUp(io, room), 15000);
+  room.timer = setTimeout(() => timeUp(io, room), timeLimitSeconds * 1000);
 }
 
 function timeUp(io, room) {
   if (!room.active) return;
-  const q = questions[room.currentIndex];
+  const roomQuestions = room.questions || questions;
+  const q = roomQuestions[room.currentIndex];
+  if (!q) return;
+
   io.to(room.roomId).emit("question:time_up", {
     correctOption: q.correctOption,
-    explanation: q.explanation
+    explanation: q.explanation || "No explanation provided."
   });
   io.to(room.roomId).emit("leaderboard:update", { leaderboard: leaderboard(room) });
 
@@ -69,15 +75,24 @@ function registerGameHandlers(io, rooms) {
         return ack?.({ ok: false, message: "Answer rejected." });
       }
       if (socket.data.pin !== room.pin) return ack?.({ ok: false, message: "Invalid room." });
-      if (room.currentIndex < 0 || room.currentIndex >= questions.length) return ack?.({ ok: false, message: "No active question." });
-      if (room.answered.has(socket.id)) return ack?.({ ok: false, message: "You already answered this question." });
 
+      const roomQuestions = room.questions || questions;
+      if (room.currentIndex < 0 || room.currentIndex >= roomQuestions.length) {
+        return ack?.({ ok: false, message: "No active question." });
+      }
+      if (room.answered.has(socket.id)) {
+        return ack?.({ ok: false, message: "You already answered this question." });
+      }
+
+      const q = roomQuestions[room.currentIndex];
+      const timeLimitMs = (q.timeLimitSeconds || 15) * 1000;
       const elapsed = Date.now() - room.startedAt;
-      if (elapsed >= 15000) return ack?.({ ok: false, message: "Time is up. Answer rejected." });
+      if (elapsed >= timeLimitMs) {
+        return ack?.({ ok: false, message: "Time is up. Answer rejected." });
+      }
 
-      const q = questions[room.currentIndex];
       const isCorrect = Number(selectedOption) === q.correctOption;
-      const score = calculateScore(isCorrect, elapsed, 15000);
+      const score = calculateScore(isCorrect, elapsed, timeLimitMs);
       const player = room.players.get(socket.id);
       player.score += score;
       room.answered.add(socket.id);

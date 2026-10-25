@@ -1,0 +1,15 @@
+Question 1: Which protocol is used for secure web communication?
+A. HTTP
+B. HTTPS
+C. FTP
+D. SMTP
+Answer: B
+Explanation: HTTPS uses TLS encryption for secure communication.
+
+Question 2: What is the primary function of DNS?
+A. Routing email
+B. Resolving domain names to IP addresses
+C. Encrypting data packets
+D. Allocating MAC addresses
+Answer: B
+Explanation: DNS translates human-friendly domains into machine IP addresses.
