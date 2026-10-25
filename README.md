@@ -160,9 +160,17 @@ realtime-quiz-platform/
 
 ## Screenshots
 
-<img width="1470" height="877" alt="Screenshot 2026-09-17 at 7 43 44 PM" src="https://github.com/user-attachments/assets/9c32f6ce-b788-4818-8505-c28a8a4a083b" />
+<img width="2936" height="1762" alt="image" src="https://github.com/user-attachments/assets/e86e5c77-3879-40dc-b20c-5b693a0b37e0" />
 
-<img width="1470" height="882" alt="Screenshot 2026-09-17 at 7 43 57 PM" src="https://github.com/user-attachments/assets/2c565a75-bb05-4068-bac2-c1ffb9cbd7c7" />
+<img width="2940" height="1766" alt="image" src="https://github.com/user-attachments/assets/67400cd6-6b6a-4874-b899-fd1925b20f6a" />
+
+<img width="2940" height="1758" alt="image" src="https://github.com/user-attachments/assets/fb7000d6-f624-448a-b954-af67644b5d3e" />
+
+<img width="2930" height="1754" alt="image" src="https://github.com/user-attachments/assets/1a433389-e257-4dab-aa4f-729ae0933e98" />
+
+<img width="2940" height="1762" alt="image" src="https://github.com/user-attachments/assets/e68c4992-3ec7-453c-be56-2fd8dc80887a" />
+
+<img width="2932" height="1766" alt="image" src="https://github.com/user-attachments/assets/b2af50a2-f352-4b7b-af00-c21e9cd8e609" />
 
 <img width="1470" height="881" alt="Screenshot 2026-09-17 at 7 45 03 PM" src="https://github.com/user-attachments/assets/8c2700d8-21bc-4178-92ed-15088638be23" />
 
