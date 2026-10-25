@@ -735,10 +735,76 @@ const QuizApp = (() => {
     };
 
     // --- SOCKET EVENT HANDLERS ---
+    let testSockets = [];
+    window.addEventListener("beforeunload", () => {
+      testSockets.forEach(s => s.disconnect());
+    });
+
+    function addTestPlayer() {
+      const lobbyMsg = $("lobbyMsg");
+      const botNum = testSockets.length + 1;
+      const botName = `Player ${botNum}`;
+      const botSocket = io();
+
+      botSocket.on("connect", () => {
+        botSocket.emit("quiz:join", { pin, playerName: botName }, res => {
+          if (res?.ok) {
+            testSockets.push(botSocket);
+            if (lobbyMsg) {
+              lobbyMsg.style.display = "block";
+              lobbyMsg.className = "msg success";
+              lobbyMsg.innerHTML = `✓ <b>${escapeHtml(botName)}</b> joined the room! Click <b>Start Game ▶</b> whenever you are ready.`;
+            }
+          } else if (lobbyMsg) {
+            lobbyMsg.style.display = "block";
+            lobbyMsg.className = "msg";
+            lobbyMsg.textContent = res?.message || "Failed to add test player.";
+          }
+        });
+      });
+
+      botSocket.on("question:start", q => {
+        const option = Math.floor(Math.random() * (q.options?.length || 4));
+        const delay = 1200 + Math.floor(Math.random() * 2000);
+        setTimeout(() => {
+          botSocket.emit("answer:submit", {
+            pin,
+            selectedOption: option,
+            timeTakenMs: delay
+          });
+        }, delay);
+      });
+    }
+
+    if ($("quickAddBotBtn")) {
+      $("quickAddBotBtn").onclick = () => addTestPlayer();
+    }
+
+    function startSoloPreview() {
+      const lobbyMsg = $("lobbyMsg");
+      socket.emit("quiz:start", { pin, allowSolo: true }, res => {
+        if (!res?.ok && lobbyMsg) {
+          lobbyMsg.style.display = "block";
+          lobbyMsg.className = "msg";
+          lobbyMsg.textContent = res?.message || "Failed to start solo preview.";
+        }
+      });
+    }
+
     socket.on("quiz:created", data => {
       pin = data.pin;
       $("pin").textContent = pin;
       $("roomMeta").textContent = `${data.quizTitle || data.category} • ${data.questionCount} questions`;
+      const quickLink = $("quickPlayerLink");
+      if (quickLink) {
+        quickLink.href = `/player.html?pin=${encodeURIComponent(pin)}`;
+      }
+      const lobbyMsg = $("lobbyMsg");
+      if (lobbyMsg) {
+        lobbyMsg.textContent = "";
+        lobbyMsg.className = "msg";
+        lobbyMsg.style.display = "none";
+      }
       show("lobbyView");
     });
 
@@ -747,11 +813,63 @@ const QuizApp = (() => {
       $("players").innerHTML = data.players.length
         ? data.players.map(p => `<div class="player-item"><span>${escapeHtml(p.name)}</span><b>${p.score}</b></div>`).join("")
         : `<p class="muted">Waiting for players to join…</p>`;
+
+      const lobbyMsg = $("lobbyMsg");
+      if (data.players.length > 0 && lobbyMsg && !lobbyMsg.classList.contains("success")) {
+        lobbyMsg.style.display = "none";
+        lobbyMsg.textContent = "";
+      }
     });
 
     $("startBtn").onclick = () => {
+      const lobbyMsg = $("lobbyMsg");
+      if (lobbyMsg) {
+        lobbyMsg.textContent = "";
+        lobbyMsg.className = "msg";
+        lobbyMsg.style.display = "none";
+      }
+
+      if (!pin) {
+        if (lobbyMsg) {
+          lobbyMsg.style.display = "block";
+          lobbyMsg.textContent = "Error: Room PIN not found. Please create a room first.";
+        }
+        return;
+      }
+
+      const count = Number($("playerCount")?.textContent) || 0;
+      if (count === 0) {
+        if (lobbyMsg) {
+          lobbyMsg.style.display = "block";
+          lobbyMsg.innerHTML = `
+            <div style="display:flex; flex-direction:column; gap:8px;">
+              <div>⚠️ <b>At least one player must join</b> before starting the battle!</div>
+              <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-top:4px;">
+                <a href="/player.html?pin=${encodeURIComponent(pin)}" target="_blank" class="primary btn-small" style="text-decoration:none; display:inline-flex; align-items:center; gap:5px;">
+                  👤 Open Player Screen (New Tab)
+                </a>
+                <button id="addBotInlineBtn" type="button" class="btn-secondary btn-small">
+                  🤖 + Add Test Player
+                </button>
+                <button id="startSoloInlineBtn" type="button" class="btn-secondary btn-small" title="Run question countdown & reveal without players">
+                  👁 Start Solo Preview ▶
+                </button>
+              </div>
+            </div>
+          `;
+          $("addBotInlineBtn").onclick = () => addTestPlayer();
+          $("startSoloInlineBtn").onclick = () => startSoloPreview();
+        }
+        return;
+      }
+
       socket.emit("quiz:start", { pin }, res => {
-        if (!res?.ok) $("createMsg").textContent = res.message;
+        if (!res?.ok) {
+          if (lobbyMsg) {
+            lobbyMsg.style.display = "block";
+            lobbyMsg.textContent = res?.message || "Failed to start quiz.";
+          }
+        }
       });
     };
 

@@ -195,8 +195,11 @@
           <div id="pin" class="pin">----</div>
           <p id="roomMeta" class="muted"></p>
         </div>
-        <button id="startBtn" class="primary">Start Game ▶</button>
+        <div style="display:flex; flex-direction:column; align-items:flex-end; gap:8px;">
+          <button id="startBtn" class="primary" style="font-size:16px; padding:12px 24px;">Start Game ▶</button>
+        </div>
       </div>
+      <div id="lobbyMsg" class="msg" style="margin-bottom:18px; display:none;"></div>
       <div class="host-grid">
         <div class="panel">
           <div class="section-title">
@@ -206,9 +209,9 @@
         </div>
         <div class="panel tips">
           <h2>How it works</h2>
-          <p>1. Share the PIN with players.</p>
-          <p>2. Start when everyone has joined.</p>
-          <p>3. Questions run for 15 seconds.</p>
+          <p>1. Share the PIN with players (or click <b>Open Player Screen</b>).</p>
+          <p>2. Once at least one player joins, click <b>Start Game ▶</b>.</p>
+          <p>3. Questions run for 15 seconds (or custom timer).</p>
           <p>4. Faster correct answers earn more points.</p>
         </div>
       </div>
@@ -235,6 +238,8 @@
       </div>
     </section>
 
+    <!-- 8. Quiz Ended / Results View -->
+    <section id="endView" class="hidden panel end-card">
       <div class="trophy">
         <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path></svg>
       </div>

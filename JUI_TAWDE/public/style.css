@@ -1693,6 +1693,24 @@ select:focus {
     min-height: 18px
 }
 
+#lobbyMsg {
+    background: #fff0f3;
+    border: 1px solid #f8c9d2;
+    color: #8c2e42;
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: 14px;
+    line-height: 1.5;
+    box-shadow: 0 2px 8px rgba(160, 77, 92, 0.08);
+}
+
+#lobbyMsg.success {
+    background: #ecfdf5;
+    border-color: #a7f3d0;
+    color: #065f46;
+    box-shadow: 0 2px 8px rgba(6, 95, 70, 0.08);
+}
+
 .room-head {
     display: flex;
     justify-content: space-between;

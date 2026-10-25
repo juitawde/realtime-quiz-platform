@@ -121,11 +121,11 @@ function registerLobbyHandlers(io, rooms) {
       ack?.({ ok: true });
     });
 
-    socket.on("quiz:start", ({ pin } = {}, ack) => {
+    socket.on("quiz:start", ({ pin, allowSolo = false } = {}, ack) => {
       const room = rooms.get(String(pin));
       if (!room || room.hostId !== socket.id) return ack?.({ ok: false, message: "Only the host can start this quiz." });
       if (room.active) return ack?.({ ok: false, message: "Quiz is already running." });
-      if (room.players.size < 1) return ack?.({ ok: false, message: "At least one player must join." });
+      if (room.players.size < 1 && !allowSolo) return ack?.({ ok: false, message: "At least one player must join before starting the quiz." });
       room.active = true;
       ack?.({ ok: true });
       io.to(room.roomId).emit("quiz:started");
