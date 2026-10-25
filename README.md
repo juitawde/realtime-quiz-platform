@@ -1,196 +1,336 @@
-# 🧠 Real-Time Multiplayer Quiz Platform
+# Quiz Arena — Real-Time Multiplayer Quiz Platform
 
-A real-time multiplayer quiz application built with **Node.js, Express.js, and Socket.io**, allowing hosts to create and manage quizzes while participants compete by answering questions in real time.
+Quiz Arena is a real-time multiplayer quiz application that allows users to host live quizzes, invite participants using a room PIN, create custom quizzes, import questions from documents, and analyse player performance through persistent quiz history and detailed reports.
 
-The platform supports a host-controlled quiz experience, live question delivery, countdown timers, answer evaluation, explanations, leaderboards, and winner announcements. It is designed to support both manually created quizzes and quizzes imported from documents.
+The platform combines real-time gameplay with account-based history, server-side scoring, question-level analytics, and a winners' podium to provide a complete quiz hosting and participation experience.
 
 ## Live Demo Link: 
 https://realtime-quiz-platform-w0c4.onrender.com/
 
-## ✦ New Enhanced Features
+## Features
 
-### 👤 Dedicated Authentication & Account Management
-- Dedicated, fully styled standalone pages: `/login` (`login.html`) and `/register` (`register.html`), replacing modals with an accessible, cohesive experience matching Quiz Arena's warm cream and rose aesthetic.
-- Secure user registration and login with display name, email normalization, and password validation.
-- Passwords hashed using bcrypt (10 rounds) — zero plaintext storage.
-- Database-backed session tokens with 7-day expiration and automated TTL indexes in MongoDB.
-- HTTP-only session cookies with fallback Bearer and header token support.
-- Generic error messages for login failures to prevent account enumeration.
-- In-memory rate limiting to protect against brute-force attacks.
+### 1. Real-Time Multiplayer Quiz Gameplay
 
-### 🍃 Persistent MongoDB Database (via Mongoose)
-- Database engine: **MongoDB with Mongoose schemas and models** replacing legacy SQLite.
-- Dedicated connection module (`JUI_TAWDE/config/database.js`) with sanitized URI logging, reconnection handling, and clean shutdown hooks.
-- Schema entities: `User`, `Session` (with TTL index), `QuizTemplate`, `QuizSession`, `QuizParticipant`, `QuestionResult` (with compound uniqueness indexes preventing duplicate answers).
-- Immutable snapshot of quiz questions, options, correct answers, and explanations stored with each session.
-- Server-authoritative timestamps for all question start and answer arrival times.
-- Zero data loss: All historical sessions, answers, and reports persist across server restarts.
+- Create and host live quiz sessions.
+- Generate a unique room PIN for participants.
+- Allow players to join using the room PIN.
+- Synchronize questions, timers, answer submissions, and results using Socket.io.
+- Calculate scores and validate answers on the server.
+- Display correct answers and explanations after the appropriate reveal stage.
+- Show live leaderboards and final rankings.
+- Support multiple participants in a single quiz session.
 
-### ♛ Winners' Podium & Full Leaderboard
-- Stage 1: Top-3 Winners' Podium with clear visual hierarchy (1st Gold in center with ♛ crown, 2nd Silver on left with ★ star, 3rd Bronze on right with ★ star).
-- Stage 2: Complete participant leaderboard table with ranks, scores, accuracy percentage, and average response times.
-- Stage 3: Direct report access action for hosts to launch comprehensive session analytics.
+### 2. Custom Quiz Creation
 
-### 📊 Automatic Quiz Reports & Player Analytics
-- Complete session report generated idempotently upon quiz completion.
-- Host-level diagnostic overview: overall accuracy, average score, average response time, highest score, winner.
-- Question-level diagnostics: correctness percentage, answer counts, unanswered counts, and most common incorrect options.
-- Individual participant analysis: toggleable question-by-question breakdown showing selected answers, correct answers, response times, points, and explanations.
-- Role-based authorization: hosts access full reports; participants access their own question breakdowns with other participants' details safely redacted; unauthorized access rejected with 403 Forbidden.
+- Create quizzes using your own questions.
+- Configure the number of questions in a quiz.
+- Add multiple-choice options, correct answers, and explanations.
+- Validate question structure before starting a game.
+- Save reusable quiz templates locally.
+- Reuse saved quizzes for future sessions.
 
-### 📜 Account History & Reports Dashboard
-- Accessible via the **History & Reports** tab on the host interface.
-- Hosted Quizzes: browse all past sessions, search by title, and launch full interactive analytics reports.
-- Played Quizzes: track personal performance across all games played, with scores, accuracy, and rank.
+### 3. Document-Based Quiz Import
 
-## 🎮 Real-Time Multiplayer Gameplay
-- Create a quiz room with a unique room PIN.
-- Allow participants to join using the room PIN.
-- Start and manage the quiz as the host.
-- Deliver questions to participants in real time using Socket.io.
-- Display countdown timers for questions.
-- Accept participant answers and evaluate them on the server.
-- Reveal correct answers and explanations after each question.
-- Display live quiz results, leaderboards, and the final winner.
+Create quizzes from supported document formats instead of manually entering every question.
 
-### ✍️ Custom Quiz Creation
-- Create quizzes with a custom title and question count.
-- Add questions and multiple-choice answer options manually.
-- Select the correct answer for each question.
-- Add explanations to help participants understand the answers.
-- Edit, delete, and reorder questions before starting a game.
-- Review and validate questions before launching a quiz.
+The quiz import system is designed to support formats such as:
 
-### 📄 Document-Based Quiz Import
+- PDF
+- DOCX
+- XLSX
+- CSV
+- TXT
+- Markdown
+- JSON
 
-Create quizzes from existing question documents instead of entering every question manually.
+Depending on the document format and parser implementation, the system can extract questions, answer options, correct answers, and explanations into a structured quiz.
 
-Supported formats planned for the importer:
+Imported questions are validated before they are used in a live session. Review extracted content before hosting, especially when source documents contain complex layouts, scanned pages, or ambiguous answer formats.
 
-| File format | Extension |
-|---|---|
-| PDF documents | `.pdf` |
-| Microsoft Word | `.docx` |
-| Microsoft Excel | `.xlsx`, `.xls` |
-| CSV spreadsheets | `.csv` |
-| Plain text | `.txt` |
-| Markdown | `.md` |
-| JSON | `.json` |
+### 4. User Authentication
 
-The importer is designed to extract:
+Quiz Arena includes account-based authentication for personalized quiz activity.
 
-- Question text
-- Multiple-choice options
-- Correct answers
-- Explanations
-- Other supported question metadata
+- Register using a display name, email address, and password.
+- Log in to access your account.
+- Log out securely.
+- Associate hosted quiz sessions with the authenticated host.
+- Associate participation records with registered players.
+- Maintain separate histories for quizzes hosted and quizzes played.
+- Support guest participation where enabled.
 
-For example, a host can upload a PDF containing questions, options, answer keys, and explanations. The application can extract the available content and convert it into structured quiz questions.
+Passwords must be securely hashed, and protected operations must be authorized on the backend.
 
-**Import workflow:**
+### 5. Dedicated Login and Registration Pages
 
-1. Upload a supported document.
-2. Extract and structure the available question data.
-3. Review the extracted questions and answers.
-4. Correct missing or incorrectly extracted information.
-5. Save the validated quiz.
-6. Start a multiplayer game using the imported questions.
+The authentication interface uses separate pages rather than relying on a login or registration modal.
 
-Scanned PDFs may require Optical Character Recognition (OCR). Extraction accuracy depends on document quality and formatting, so reviewing imported questions before starting a game is important.
+- Dedicated login page.
+- Dedicated registration page.
+- Client-side and server-side validation.
+- Password visibility controls.
+- Helpful authentication error messages.
+- Navigation between login, registration, and the main application.
+- Account-aware navigation after login.
 
-### 💾 Saved Quizzes
+The authentication pages follow the existing Quiz Arena visual design.
 
-- Store custom quizzes locally in the host's browser using IndexedDB.
-- Reopen and reuse previously saved quizzes.
-- Edit, duplicate, and delete saved quizzes.
-- Retain saved quizzes across normal browser restarts on the same browser and device.
+### 6. MongoDB Persistence
 
-Saved quizzes are stored locally on the host's device. They are not automatically available on other devices.
+MongoDB is the intended persistent database for user accounts, quiz sessions, participant records, and question-level results.
 
-### 💡 Explanations for Everyone
+Mongoose provides the database models, validation, and database operations.
 
-Both the host and participants can view explanations after the correct answer is revealed.
+The database stores information such as:
 
-- Display the correct answer after the question ends.
-- Show the associated explanation to participants and the host.
-- Allow participants to understand why an answer is correct.
-- Keep answers and explanations hidden until the appropriate reveal stage.
+- User accounts and password hashes.
+- Reusable quiz templates, where supported.
+- Quiz session metadata.
+- Host and participant associations.
+- Question snapshots used during each session.
+- Player answers and correctness.
+- Response times and points earned.
+- Final scores, rankings, and session statistics.
 
-### 🏆 Leaderboard and Results
+Each conducted quiz is stored as a separate session so that its historical results remain distinct from other sessions using the same quiz template.
 
-- Evaluate answers on the server.
-- Maintain the existing scoring logic.
-- Display quiz results and the leaderboard.
-- Announce the final winner when the quiz ends.
+The application should use MongoDB for persistent account history and reports. Browser storage may still be used for local quiz templates and other explicitly local data.
 
-### 🔒 Validation and Room Isolation
+### 7. Hosted Quiz History
 
-- Validate quiz questions before starting a game.
-- Restrict quiz configuration to the authorized host.
-- Keep active quiz data associated with its room.
-- Prevent premature exposure of correct answers.
-- Validate uploaded content and handle malformed files.
-- Render question text and explanations safely.
+Hosts can access their previously conducted quizzes through their account.
 
-## 🛠️ Technology Stack
+The history view is designed to show:
+
+- Quiz title.
+- Date and time.
+- Number of participants.
+- Winner and winning score.
+- Session duration.
+- Session status.
+- Access to the detailed report.
+
+Each history entry should link to the report for that specific quiz session.
+
+### 8. Played Quiz History
+
+Registered participants can review quizzes they have played.
+
+Their history can include:
+
+- Quiz title.
+- Host name, where available.
+- Date played.
+- Final score.
+- Final rank.
+- Correct and incorrect answer counts.
+- Accuracy percentage.
+- Average response time.
+- Access to their permitted results.
+
+History should remain available after refreshing the browser, logging out and back in, or restarting the application, provided the session data was successfully persisted.
+
+### 9. Detailed Quiz Reports and Analytics
+
+Every completed quiz session can produce a report containing an overview of the game and individual player performance.
+
+#### Session overview
+
+- Quiz title and session identifier.
+- Host information.
+- Start time and end time.
+- Total duration.
+- Total questions.
+- Number of participants.
+- Winner and highest score.
+- Average participant score.
+- Overall answer accuracy.
+
+#### Individual player analysis
+
+For each participant, the report can include:
+
+- Display name.
+- Final score and rank.
+- Correct answers.
+- Incorrect answers.
+- Unanswered questions.
+- Accuracy percentage.
+- Total response time.
+- Average response time.
+
+#### Question-by-question analysis
+
+For each player and question, the report can display:
+
+- Question number and text.
+- Selected answer.
+- Correct answer.
+- Correct, incorrect, or unanswered status.
+- Response time.
+- Points earned.
+- Question explanation.
+
+#### Question-level statistics
+
+Where the underlying answer records are available, the host report can also show:
+
+- Number of correct answers.
+- Number of incorrect answers.
+- Number of unanswered questions.
+- Percentage of participants answering correctly.
+- Average response time.
+- Frequently selected incorrect options.
+
+These statistics must be calculated from actual session results rather than hardcoded examples.
+
+### 10. Winners' Podium and Final Leaderboard
+
+At the end of a quiz, the results experience is designed to show the winners' podium first, followed by the complete leaderboard.
+
+#### Winners' podium
+
+- First place appears in the center on the highest podium.
+- Second place appears on the left.
+- Third place appears on the right.
+- Each position displays the actual player's name, final score, and rank.
+- Gold, silver, and bronze accents distinguish the three positions.
+- The podium adapts to sessions with fewer than three participants.
+- Ties follow a consistent ranking policy.
+
+#### Complete leaderboard
+
+After the podium, users can view the full ranking of all participants.
+
+The leaderboard can display:
+
+- Rank.
+- Player name.
+- Final score.
+- Correct answers.
+- Accuracy.
+- Average response time.
+
+The host can then open the detailed analytics report for the completed session. Participants can access their own permitted results.
+
+The podium, leaderboard, and report must use consistent, server-calculated final results.
+
+### 11. Response-Time Tracking and Scoring
+
+The server records answer submissions and calculates response times using server-controlled timestamps.
+
+- Validate answer submissions against the active question and deadline.
+- Calculate correctness and points on the server.
+- Record accepted answers and response times.
+- Record unanswered questions when the timer expires.
+- Prevent duplicate submissions from creating duplicate result records.
+- Preserve answers already recorded if a participant disconnects.
+- Finalize participant scores and rankings when the session ends.
+
+The existing scoring rules should remain unchanged unless a specific change is required.
+
+### 12. Persistent Session Reports
+
+Each conducted quiz has its own session record.
+
+Historical reports should remain consistent even if the original reusable quiz template is later edited.
+
+The application should:
+
+- Persist completed session results.
+- Save the question snapshot used during the session.
+- Associate participants and answers with the correct session.
+- Prevent duplicate finalization.
+- Handle database errors without falsely reporting successful persistence.
+- Retrieve reports through authenticated backend endpoints.
+
+### 13. UI and Design
+
+Quiz Arena retains its existing design language, including its warm, understated color palette.
+
+The interface uses:
+
+- Cream backgrounds.
+- Dusty rose and lilac accents.
+- Dark, readable text.
+- Inter typography.
+- Rounded cards and consistent spacing.
+- Subtle shadows and gradients.
+- Professional SVG icons.
+- Responsive layouts where supported.
+
+The authentication pages, quiz history, analytics reports, and winners' podium should integrate with the existing design rather than introducing an unrelated visual style.
+
+## Technology Stack
 
 | Technology | Purpose |
 |---|---|
-| Node.js | JavaScript runtime for the backend |
-| Express.js | HTTP server and application routes |
-| Socket.io | Real-time communication between the host, server, and participants |
-| HTML5 | Frontend structure |
-| CSS3 | Styling and layout |
-| JavaScript | Client-side functionality and application logic |
-| IndexedDB | Persistent local storage for saved quizzes |
-| PDF.js (`pdfjs-dist`) | PDF text extraction |
-| Mammoth.js (`mammoth`) | Word document text extraction |
-| SheetJS (`xlsx`) | Excel and spreadsheet parsing |
-| Tesseract.js | Optional OCR for scanned documents |
-| LLM API | Optional AI-assisted parsing of complex documents |
+| HTML | Page structure |
+| CSS | Styling and responsive layouts |
+| JavaScript | Frontend interactions |
+| Node.js | Server-side JavaScript runtime |
+| Express.js | HTTP server and API routes |
+| Socket.io | Real-time multiplayer communication |
+| MongoDB | Persistent application data |
+| Mongoose | MongoDB models and database operations |
+| bcryptjs | Password hashing, if retained in the implementation |
+| dotenv | Environment variable configuration |
+| Existing document parsers | Extracting questions from supported file formats |
 
-The document-parsing libraries should be installed only when their corresponding import features are implemented. AI-assisted parsing is optional and requires a separately configured provider.
+The exact document-parsing libraries and authentication/session implementation should match the installed project dependencies.
 
-## 🏗️ Project Structure
+## Project Structure
 
-The following is a representative structure. Actual filenames may differ depending on the implementation.
+The following is a representative structure based on the existing project. Retain the actual filenames and add or remove files as required by the implementation.
 
 ```text
-realtime-quiz-platform/
-├── JUI_TAWDE/
-│   ├── public/
-│   │   ├── js/
-│   │   │   ├── quizImporter.js
-│   │   │   ├── quizParser.js
-│   │   │   ├── quizStorage.js
-│   │   │   └── quizValidation.js
-│   │   ├── app.js
-│   │   ├── host.html
-│   │   ├── index.html
-│   │   ├── player.html
-│   │   └── style.css
-│   ├── services/
-│   │   └── documentParser.js
-│   ├── sockets/
-│   │   ├── gameEngine.js
-│   │   └── lobbyHandler.js
-│   ├── utils/
+JUI_TAWDE/
+├── config/
+│   └── database.js
+├── middleware/
+│   └── authMiddleware.js
+├── models/
+│   ├── User.js
+│   ├── QuizTemplate.js
+│   ├── QuizSession.js
+│   ├── ParticipantResult.js
+│   └── QuestionResult.js
+├── services/
+│   ├── authService.js
+│   ├── documentParser.js
+│   ├── quizReportService.js
+│   └── sessionService.js
+├── sockets/
+│   ├── gameEngine.js
+│   └── lobbyHandler.js
+├── utils/
+│   └── quizValidation.js
+├── public/
+│   ├── js/
+│   │   ├── auth.js
+│   │   ├── podium.js
+│   │   ├── quizHistory.js
+│   │   ├── quizImporter.js
+│   │   ├── quizParser.js
+│   │   ├── quizReports.js
+│   │   ├── quizStorage.js
 │   │   └── quizValidation.js
-│   ├── tests/
-│   │   ├── fixtures/
-│   │   ├── generateBinaryFixtures.js
-│   │   ├── generateFixtures.js
-│   │   └── runAllTests.js
-│   ├── data/
-│   ├── .env
-│   ├── .gitignore
-│   ├── package.json
-│   ├── package-lock.json
-│   ├── README.md
-│   └── server.js
+│   ├── index.html
+│   ├── login.html
+│   ├── register.html
+│   ├── host.html
+│   ├── player.html
+│   ├── app.js
+│   └── style.css
+├── tests/
+│   └── runAllTests.js
+├── .env.example
+├── .gitignore
+├── package.json
+├── package-lock.json
+├── README.md
+└── server.js
 ```
-
-**Note:** The structure above illustrates the existing application and possible new modules. Keep the actual repository structure consistent with the implemented code.
 
 ## Screenshots
 
@@ -235,240 +375,163 @@ realtime-quiz-platform/
 <img width="2940" height="1762" alt="image" src="https://github.com/user-attachments/assets/c367eb90-3f74-4e90-be0e-9b5781ed02a3" />
 
 
-## ⚙️ Installation and Setup
+## Installation and Setup
 
 ### Prerequisites
 
-Install the following before running the application:
+- Node.js and npm.
+- MongoDB Atlas account or a locally running MongoDB Community Server.
+- Git, if cloning the repository.
 
-- [Node.js](https://nodejs.org/) — preferably an active LTS version compatible with the project's dependencies.
-- npm, which is included with Node.js.
-- A modern browser with Socket.io and IndexedDB support.
-
-### 1. Clone the Repository
+### 1. Open the project directory
 
 ```bash
-git clone https://github.com/juitawde/realtime-quiz-platform.git
-cd realtime-quiz-platform/JUI_TAWDE
+cd path/to/realtime-quiz-platform/JUI_TAWDE
 ```
 
-If the repository is already cloned, navigate directly to the directory containing `package.json`.
+Use the actual path to your project directory.
 
-### 2. Install Dependencies
+### 2. Install dependencies
 
 ```bash
 npm install
 ```
 
-This installs the dependencies declared in `package.json`.
+### 3. Configure environment variables
 
-If document import is implemented using the recommended libraries, install any missing dependencies required by the project.
+Create a `.env` file in the location expected by `server.js`.
 
-For example:
-
-```bash
-npm install pdfjs-dist mammoth xlsx
-```
-
-For optional OCR support:
-
-```bash
-npm install tesseract.js
-```
-
-Only install packages that are compatible with the existing project and its runtime.
-
-### 3. Configure Environment Variables & MongoDB
-
-Create a `.env` file in `JUI_TAWDE/` (or repository root) if one does not already exist. A template is provided in `.env.example`:
+Example:
 
 ```env
 PORT=5000
 MONGODB_URI=mongodb://127.0.0.1:27017/quiz_arena
-SESSION_SECRET=replace_with_a_long_random_secret_in_production
+SESSION_SECRET=replace_with_a_long_random_secret
 ```
 
-#### Option A — MongoDB Atlas (Cloud Hosted)
-1. Sign in to your [MongoDB Atlas](https://www.mongodb.com/atlas) account and create or select a cluster.
-2. In **Database Access**, create a database user with read/write privileges on your target database.
-3. In **Network Access**, configure IP access (e.g. add your current IP address or `0.0.0.0/0` for cloud deployment).
-4. In your cluster dashboard, click **Connect** > **Drivers** (Node.js) to retrieve your connection string.
-5. In your `.env` file, set `MONGODB_URI` to your connection string:
-   ```env
-   MONGODB_URI=mongodb+srv://<username>:<password>@cluster0.xxxx.mongodb.net/quiz_arena?retryWrites=true&w=majority
-   ```
-6. Start the server and check the console for `[Database] MongoDB connected successfully to: mongodb+srv://...`.
+For MongoDB Atlas, replace the local URI with the connection string provided by Atlas.
 
-#### Option B — Local MongoDB Community Server
-1. Install MongoDB Community Server:
-   - **macOS (Homebrew):** `brew tap mongodb/brew && brew install mongodb-community`
-   - **Linux (Ubuntu/Debian):** `sudo apt-get install -y mongodb-org`
-   - **Windows:** Download from MongoDB Download Center and run the MSI installer.
-2. Start the MongoDB daemon:
-   ```bash
-   # macOS
-   brew services start mongodb-community
-   # or run directly:
-   mongod --config /opt/homebrew/etc/mongod.conf
-   ```
-3. Set your connection URI in `.env`:
-   ```env
-   MONGODB_URI=mongodb://127.0.0.1:27017/quiz_arena
-   ```
-4. Start the server and verify connection output.
+Keep `.env` private and ensure it is listed in `.gitignore`.
 
-> **Security Note:** Never commit `.env` or database credentials to git. The `.env` file is excluded via `.gitignore`.
-
-### 4. (Optional) Migrate Legacy SQLite Data to MongoDB
-
-If upgrading from an existing installation with historical data in `JUI_TAWDE/data/quiz_platform.db`:
+Generate a secure session secret on macOS or Linux using:
 
 ```bash
-node JUI_TAWDE/scripts/migrateSqliteToMongo.js
+openssl rand -hex 32
 ```
 
-This automated migration script:
-- Safely reads existing users, active sessions, quiz sessions, participants, and question results.
-- Preserves UUID keys, bcrypt password hashes, and historical room PINs.
-- Is idempotent (can be safely run multiple times without duplicating entries).
-- Automatically created a backup at `JUI_TAWDE/data/quiz_platform.db.bak`.
+Copy the generated value after `SESSION_SECRET=`.
 
-### 5. Start the Application
+### 4. Start MongoDB
 
-Start the development server:
+For a local installation, ensure the MongoDB service is running.
+
+For MongoDB Atlas, configure the database user and network access, then provide the Atlas connection URI in `.env`.
+
+### 5. Start the application
+
+Use the start script defined in `package.json`. If it is configured as `start`, run:
 
 ```bash
 npm start
-# or from JUI_TAWDE:
-node JUI_TAWDE/server.js
 ```
 
-### 6. Open the Application
+Alternatively, if no start script exists:
 
-Open your browser to:
+```bash
+node server.js
+```
+
+Open the local address printed by the server, typically:
 
 ```text
 http://localhost:5000
 ```
-- Homepage: `http://localhost:5000/`
-- Dedicated Login: `http://localhost:5000/login` (`/login.html`)
-- Dedicated Register: `http://localhost:5000/register` (`/register.html`)
-- Host Dashboard: `http://localhost:5000/host.html`
-- Player Arena: `http://localhost:5000/player.html`
 
-If the application uses a different port, use the URL printed by the server when it starts.
+The application should confirm that MongoDB is connected before serving requests that require persistent data.
 
-## 🧩 How the Application Works
+## Environment Variables
 
-### Host Workflow
+| Variable | Purpose |
+|---|---|
+| `PORT` | HTTP server port |
+| `MONGODB_URI` | MongoDB connection string |
+| `SESSION_SECRET` | Secret used by the configured session mechanism |
 
-1. Open the application.
-2. Choose the host option.
-3. Create a quiz room.
-4. Select a default quiz, create a custom quiz, or import questions from a supported document.
-5. Review and validate the questions.
-6. Save the quiz locally if desired.
-7. Share the room PIN with participants.
-8. Start the quiz.
-9. Monitor questions, timers, results, and the leaderboard.
+Additional variables may be required depending on the final authentication and deployment setup.
 
-### Participant Workflow
+Never commit real credentials or production secrets to version control.
 
-1. Open the application.
-2. Join using the room PIN.
-3. Wait for the host to start the game.
-4. Read each question and submit an answer.
-5. View the correct answer and explanation after the reveal.
-6. Follow the leaderboard and final results.
+## Testing
 
-### System Architecture
-
-```text
-Host Browser
-    |
-    | Create / Import / Save Quiz
-    v
-Quiz Validation
-    |
-    | Start Game
-    v
-Express.js + Socket.io Server
-    |
-    | Room-specific question events
-    v
-Participants' Browsers
-    |
-    | Submit Answers
-    v
-Server-side Answer Evaluation
-    |
-    | Correct Answer + Explanation
-    v
-Host and Participants
-    |
-    v
-Leaderboard and Final Results
-```
-
-The host's saved quiz library remains in IndexedDB, while the selected active quiz is transferred to the server for the multiplayer session. Active game state can remain in memory, consistent with the existing architecture.
-
-## 🧪 Automated Testing
-
-Run the full end-to-end automated test suite:
+Run the test command configured in `package.json`. If the existing test runner is invoked directly, the command may be:
 
 ```bash
-npm test
+node tests/runAllTests.js
 ```
 
-The test runner (`tests/runAllTests.js`) automatically executes and validates 39 comprehensive tests across 5 categories:
+The test suite should cover:
 
-1. **Quiz Schema & Validation Tests**: well-formed schemas, missing fields, option counts, sanitized structures.
-2. **Document Parser & Extraction Tests**: `.txt`, `.md`, answer keys, `.csv`, `.xlsx`, `.docx`, `.pdf`, `.json`.
-3. **Multiplayer Socket & Explanation Tests**: isolated concurrent rooms, explanations on both host and player screens, default quiz regression.
-4. **HTTP API Integration Tests**: `/health`, `/api/quiz/default`, `/api/quiz/validate`, `/api/quiz/parse-file`.
-5. **Authentication, Persistent History & Podium Tests**:
-   - Registration, email normalization, duplicate email rejection.
-   - Secure bcrypt password hashing verification (zero plaintext storage).
-   - Login, generic 401 error on bad credentials, session token persistence.
-   - Gameplay session recording with server-side authoritative timestamps.
-   - Unanswered question tracking on timer expiration.
-   - Top-3 winners' podium emission on `quiz:ended`.
-   - Complete session analytics report verification (`/api/reports/:sessionId`).
-   - Strict authorization and privacy enforcement (unauthorized / unrelated users rejected with 403; participant privacy redaction).
-   - Hosted history (`/api/history/hosted`) and played history (`/api/history/played`).
-   - Direct database persistence verification in MongoDB via Mongoose.
-   - Secure logout and session invalidation.
+- Registration, login, and logout.
+- MongoDB connection and persistence.
+- Host and participant identity.
+- Quiz creation and room joining.
+- Answer validation and scoring.
+- Response-time tracking.
+- Session finalization.
+- Hosted and played history.
+- Detailed quiz reports.
+- Winners' podium and complete rankings.
+- Authorization and privacy.
+- Existing custom quiz and document-import functionality.
 
-```text
-==================================================
-ALL TESTS COMPLETED: 39/39 PASSED
-==================================================
-```
+Report actual test results. Do not claim tests passed unless they were executed successfully.
 
-## 🚀 Future Enhancements
+## Security and Data Privacy
+
+Quiz Arena should follow these security principles:
+
+- Hash passwords securely.
+- Authenticate users on the server.
+- Authorize access to hosted reports and personal results.
+- Calculate scores and ranks on the server.
+- Validate Socket.io events.
+- Protect sensitive endpoints.
+- Avoid exposing password hashes and authentication secrets.
+- Keep environment files out of version control.
+- Avoid collecting unnecessary personal information.
+
+## Future Enhancements
 
 Potential future improvements include:
 
-- Additional document formats.
-- Improved extraction for complex PDFs and tables.
-- Optional AI-assisted question generation and document parsing.
+- Downloadable quiz reports in CSV or PDF format.
+- Advanced player-performance charts.
 - Quiz categories and difficulty levels.
-- Quiz export and import between devices.
-- Persistent multiplayer sessions and reconnect recovery.
-- Additional scoring modes and question types.
+- Historical performance comparisons.
+- Improved accessibility.
+- Session recovery and reconnection handling.
+- Cloud synchronization for reusable custom quizzes.
 
-These are potential extensions, not claims that every feature is currently implemented.
+## Project Goal
 
-## 👩‍💻 Author
+Quiz Arena aims to make live quizzes more engaging and useful by combining multiplayer gameplay with custom quiz creation, document imports, account-based history, persistent results, detailed performance analytics, and an intuitive winners' podium.
 
-**Jui Tawde**
-
-GitHub: [@juitawde](https://github.com/juitawde)
-
-## 📄 License
-
-Add a license file to the repository if you intend to distribute the project under an open-source license.
+The goal is not only to conduct quizzes but also to preserve each session's results so hosts and participants can review and understand their performance afterwards.
 
 ---
 
-Built to make multiplayer quizzes more interactive, customizable, and educational — one question at a time. 🧠
+## 👩‍💻 Author
+
+**Jui Tawde**  
+B.Tech Computer Science Engineering Student  
+Passionate about building interactive, real-time web applications and learning new technologies.
+
+- **LinkedIn:** [Jui Tawde](https://linkedin.com/in/jui-tawde-788210385/)
+
+---
+
+## ⭐ Support the Project
+
+If you like **Quiz Arena**, find it useful, or appreciate the work behind it, please consider giving this repository a **star ⭐** on GitHub. Your support motivates me to keep improving and building more projects!
+
+**Built with 💗, curiosity, and a lot of debugging.**
