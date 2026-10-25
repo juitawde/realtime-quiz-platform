@@ -164,6 +164,10 @@ realtime-quiz-platform/
 
 <img width="2940" height="1766" alt="image" src="https://github.com/user-attachments/assets/67400cd6-6b6a-4874-b899-fd1925b20f6a" />
 
+<img width="2932" height="1774" alt="image" src="https://github.com/user-attachments/assets/303443f3-2e52-4f04-b529-8d55c5996ea9" />
+
+<img width="2940" height="1766" alt="image" src="https://github.com/user-attachments/assets/a277f073-7994-49be-9ace-d0c67ee508e4" />
+
 <img width="2940" height="1758" alt="image" src="https://github.com/user-attachments/assets/fb7000d6-f624-448a-b954-af67644b5d3e" />
 
 <img width="2930" height="1754" alt="image" src="https://github.com/user-attachments/assets/1a433389-e257-4dab-aa4f-729ae0933e98" />
@@ -191,6 +195,10 @@ realtime-quiz-platform/
 <img width="1470" height="956" alt="Screenshot 2026-09-17 at 7 47 56 PM" src="https://github.com/user-attachments/assets/d241e8fb-6a1b-4600-b2cf-8f8abab5e706" />
 
 <img width="1470" height="882" alt="Screenshot 2026-09-17 at 7 48 06 PM" src="https://github.com/user-attachments/assets/d067688d-635d-4c3c-8c0b-f887b2aea7aa" />
+
+<img width="2940" height="1760" alt="image" src="https://github.com/user-attachments/assets/da315b5d-d3b2-413f-b70c-a98c83a986e3" />
+
+<img width="2940" height="1762" alt="image" src="https://github.com/user-attachments/assets/c367eb90-3f74-4e90-be0e-9b5781ed02a3" />
 
 
 ## ⚙️ Installation and Setup
