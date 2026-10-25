@@ -3,29 +3,526 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>Quiz Arena</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz Arena — Real-Time Multiplayer Trivia</title>
+  <meta name="description" content="Host and join fast-paced real-time trivia showdowns with 15-second rounds, live speed scoring, and instant standings.">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/style.css">
 </head>
 
-<body class="landing">
-  <main class="landing-card">
-    <div class="brand-mark">✦</div>
-    <p class="eyebrow">REAL-TIME MULTIPLAYER</p>
-    <h1>Quiz <span>Arena</span></h1>
-    <p class="subtitle">Think fast. Answer faster. Climb the live leaderboard.</p>
-    <div class="portal-grid">
-      <a class="portal host" href="/host.html"><b>Host a Quiz</b><small>Create a room & control the battle</small></a>
-      <a class="portal player" href="/player.html"><b>Join a Battle</b><small>Enter a PIN and play live</small></a>
+<body class="landing-body">
+  <!-- Minimal Sticky Navigation -->
+  <header class="landing-nav">
+    <div class="nav-container">
+      <a href="/" class="landing-logo">
+        <span class="logo-sparkle">✦</span>
+        <span class="logo-title">QUIZ <span>ARENA</span></span>
+      </a>
+
+      <div class="nav-status-badge">
+        <span class="pulse-indicator"></span>
+        <span>Real-Time Arena</span>
+      </div>
+
+      <div class="nav-actions">
+        <a href="/player.html" class="nav-link-btn">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="12" x2="10" y2="12"></line><line x1="8" y1="10" x2="8" y2="14"></line><line x1="15" y1="13" x2="15.01" y2="13"></line><line x1="18" y1="11" x2="18.01" y2="11"></line><rect x="2" y="6" width="20" height="12" rx="2"></rect></svg>
+          Join with PIN
+        </a>
+        <a href="/host.html" class="nav-cta-btn">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"></path></svg>
+          Host a Room
+        </a>
+      </div>
     </div>
-    <div class="feature-row">
-      <ul class="feature-list">
-        <li>15s rounds</li>
-        <li>Live players</li>
-        <li> Speed scoring</li>
-      </ul>
-    </div>
+  </header>
+
+  <main class="landing-container">
+    <!-- ============================================================ -->
+    <!-- SECTION 1: HERO & INTERACTIVE BATTLE CANVAS                   -->
+    <!-- ============================================================ -->
+    <section class="hero-section">
+      <div class="hero-split-grid">
+        <!-- LEFT SIDE: Title & Sub Info + Question Graphic -->
+        <div class="hero-left-column">
+          <div class="hero-text-block">
+            <div class="hero-badge">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+              <span>REAL-TIME MULTIPLAYER TRIVIA</span>
+            </div>
+            <h1 class="hero-title">Live Trivia Battles. Speed is Points.</h1>
+            <p class="hero-desc">
+              Quiz Arena is a high-octane real-time multiplayer trivia platform built for classrooms, study groups, and game nights. Spin up rooms in seconds, invite players with a simple 4-digit PIN, and watch live standings shift dynamically as every microsecond counts.
+            </p>
+          </div>
+
+          <!-- Graphic of Question (Live Interactive Battle Simulator) -->
+          <div class="simulator-column">
+            <div class="sim-wrapper">
+              <div class="sim-glow glow-1"></div>
+              <div class="sim-glow glow-2"></div>
+
+              <!-- Top Satellite Chip -->
+              <div class="sim-chip top-sim-chip">
+                <div class="chip-avatar-icon">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14"></path></svg>
+                </div>
+                <div class="chip-label-box">
+                  <span class="chip-player-name">Alex W.</span>
+                  <span class="chip-score-val">2,840 pts</span>
+                </div>
+                <span class="streak-tag">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path></svg>
+                  3x Streak
+                </span>
+              </div>
+
+              <!-- Central Quiz Card Graphic -->
+              <div class="interactive-battle-card">
+                <div class="sim-card-header">
+                  <div class="sim-q-badge">ROUND 3 • TECH &amp; WEB</div>
+                  <div class="sim-timer-pill">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    <span id="demoTimer">11s</span>
+                  </div>
+                </div>
+
+                <div class="sim-question-title">
+                  Which CSS property enables frosted-glass backdrop blur?
+                </div>
+
+                <!-- Interactive Option Buttons -->
+                <div class="sim-options-grid">
+                  <button type="button" class="sim-option-btn demo-btn" data-correct="false">
+                    <span class="sim-key">A</span>
+                    <span class="sim-text">box-shadow: inset</span>
+                  </button>
+                  <button type="button" class="sim-option-btn demo-btn" data-correct="true">
+                    <span class="sim-key">B</span>
+                    <span class="sim-text">backdrop-filter: blur()</span>
+                  </button>
+                  <button type="button" class="sim-option-btn demo-btn" data-correct="false">
+                    <span class="sim-key">C</span>
+                    <span class="sim-text">filter: opacity(0.8)</span>
+                  </button>
+                  <button type="button" class="sim-option-btn demo-btn" data-correct="false">
+                    <span class="sim-key">D</span>
+                    <span class="sim-text">transform-style: 3d</span>
+                  </button>
+                </div>
+
+                <!-- Real-time Feedback Strip -->
+                <div id="demoFeedback" class="sim-feedback-strip">
+                  <span class="feedback-hint">Click an answer above to test speed scoring!</span>
+                </div>
+
+                <!-- Timer Gauge -->
+                <div class="sim-progress-track">
+                  <div class="sim-progress-fill"></div>
+                </div>
+              </div>
+
+              <!-- Bottom Satellite Chips -->
+              <div class="sim-chip bottom-sim-chip">
+                <div class="chip-avatar-icon icon-mint-bg">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                </div>
+                <div class="chip-label-box">
+                  <span class="chip-player-name" id="demoScoreLabel">Demo Score: 0 pts</span>
+                  <span class="chip-score-val">1.4s response time</span>
+                </div>
+                <span class="speed-pill">+180 Speed</span>
+              </div>
+
+              <div class="sim-chip users-sim-chip">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                <span>14 Players Live</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT SIDE: Join Active Battle & Host Showdown Cards -->
+        <div class="hero-right-column launchpad-column">
+          <!-- Join Room Card -->
+          <div class="action-card join-action-card">
+            <div class="card-top-row">
+              <div class="action-icon-pill icon-lilac">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="12" x2="10" y2="12"></line><line x1="8" y1="10" x2="8" y2="14"></line><line x1="15" y1="13" x2="15.01" y2="13"></line><line x1="18" y1="11" x2="18.01" y2="11"></line><rect x="2" y="6" width="20" height="12" rx="2"></rect></svg>
+              </div>
+              <span class="card-tag">PLAYER PORTAL</span>
+            </div>
+            <h2>Join Active Battle</h2>
+            <p>Enter an ongoing game right from your smartphone, laptop, or tablet. No app installation or account signup required.</p>
+
+            <form class="pin-entry-form" onsubmit="event.preventDefault(); const p = document.getElementById('homePinInput').value.trim(); window.location.href='/player.html' + (p ? '?pin=' + encodeURIComponent(p) : '');">
+              <input type="text" id="homePinInput" placeholder="4-digit PIN (e.g. 4821)" maxlength="4" pattern="[0-9]{4}" inputmode="numeric" autocomplete="off" aria-label="Room PIN">
+              <button type="submit" class="pin-submit-btn">
+                <span>Join Battle</span>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+              </button>
+            </form>
+          </div>
+
+          <br>
+
+          <!-- Host Room Card -->
+          <div class="action-card host-action-card">
+            <div class="card-top-row">
+              <div class="action-icon-pill icon-rose">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14"></path></svg>
+              </div>
+              <span class="card-tag">HOST DASHBOARD</span>
+            </div>
+            <h2>Host a Showdown</h2>
+            <p>Generate a room PIN in one click. Pick built-in question banks, build custom quizzes, or import files from PDF, Word, and Markdown.</p>
+
+            <a href="/host.html" class="host-launch-btn">
+              <span>Launch Host Room</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"></path></svg>
+            </a>
+          </div>
+
+          <!-- Metric badges strip with Lucide icons -->
+          <div class="metric-strip">
+            <div class="metric-item">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+              <span>15s Blitz Rounds</span>
+            </div>
+            <div class="metric-item">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+              <span>Decaying Speed Points</span>
+            </div>
+            <div class="metric-item">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path></svg>
+              <span>Instant WebSocket Sync</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- SECTION 2: GRAPHIC CAPABILITIES MATRIX                       -->
+    <!-- ============================================================ -->
+    <section class="visual-features-section">
+      <div class="section-header-block">
+        <span class="section-mini-badge">PLATFORM MECHANICS</span>
+        <h2 class="section-heading-title">Engineered for Fast, Live Competition</h2>
+        <p class="section-heading-desc">
+          Accuracy is only half the battle. From decaying speed bonuses to simultaneous WebSocket broadcasts, each system is optimized for high-energy interaction.
+        </p>
+      </div>
+
+      <div class="visual-features-grid">
+        <!-- Graphic Card 1: Speed Decay -->
+        <div class="graphic-card">
+          <div class="graphic-header">
+            <div class="graphic-icon icon-rose">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+            </div>
+            <h3>Decaying Speed Scoring</h3>
+          </div>
+          <!-- Visual Gauge Graphic -->
+          <div class="decay-visual-gauge">
+            <div class="gauge-scale">
+              <span>1000 pts</span>
+              <span>750 pts</span>
+              <span>500 pts</span>
+            </div>
+            <div class="gauge-bar">
+              <div class="gauge-fill"></div>
+            </div>
+          </div>
+          <p class="graphic-subtext">
+            Points decrease linearly with every passing second of the 15s round. Lightning-fast answers capture maximum score, rewarding quick confidence over hesitation.
+          </p>
+          <div class="card-feature-foot">
+            <span class="feat-pill">1,000 pts max</span>
+            <span class="feat-pill">15s countdown</span>
+          </div>
+        </div>
+
+        <!-- Graphic Card 2: Live Leaderboard Sync -->
+        <div class="graphic-card">
+          <div class="graphic-header">
+            <div class="graphic-icon icon-lilac">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path></svg>
+            </div>
+            <h3>Live WebSocket Standings</h3>
+          </div>
+          <!-- Visual Podium Graphic -->
+          <div class="podium-visual">
+            <div class="podium-slot rank-2">
+              <span class="slot-badge">#2</span>
+              <div class="slot-pillar pillar-2"></div>
+            </div>
+            <div class="podium-slot rank-1">
+              <span class="slot-badge">#1</span>
+              <div class="slot-pillar pillar-1"></div>
+            </div>
+            <div class="podium-slot rank-3">
+              <span class="slot-badge">#3</span>
+              <div class="slot-pillar pillar-3"></div>
+            </div>
+          </div>
+          <p class="graphic-subtext">
+            Real-time score recalculation transmits immediately to all players. Track your climb up the rankings and maintain winning streaks after every single question.
+          </p>
+          <div class="card-feature-foot">
+            <span class="feat-pill">Instant broadcast</span>
+            <span class="feat-pill">Streak multipliers</span>
+          </div>
+        </div>
+
+        <!-- Graphic Card 3: Document & Custom Decks -->
+        <div class="graphic-card">
+          <div class="graphic-header">
+            <div class="graphic-icon icon-mint">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+            </div>
+            <h3>Universal Document Import</h3>
+          </div>
+          <!-- Visual File Badges Graphic -->
+          <div class="file-badges-visual">
+            <span class="doc-badge badge-pdf">.PDF</span>
+            <span class="doc-badge badge-docx">.DOCX</span>
+            <span class="doc-badge badge-csv">.CSV</span>
+            <span class="doc-badge badge-md">.MD</span>
+          </div>
+          <p class="graphic-subtext">
+            Upload notes, lecture slides, or spreadsheets. Our parser automatically extracts questions, multiple options, and correct answers in just seconds.
+          </p>
+          <div class="card-feature-foot">
+            <span class="feat-pill">PDF &amp; Word support</span>
+            <span class="feat-pill">Auto-parser</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- SECTION 3: VISUAL MATCH TIMELINE FLOW                         -->
+    <!-- ============================================================ -->
+    <section class="workflow-section">
+      <div class="section-header-block">
+        <span class="section-mini-badge">MATCH PROGRESSION</span>
+        <h2 class="section-heading-title">How a Battle Unfolds in Four Steps</h2>
+        <p class="section-heading-desc">
+          Experience zero friction from room setup to podium celebration. Simple, intuitive stages keep everyone engaged throughout the game.
+        </p>
+      </div>
+
+      <div class="timeline-visual-grid">
+        <!-- Step 1 -->
+        <div class="timeline-card">
+          <div class="step-badge-circle">01</div>
+          <div class="mini-diagram pin-diagram">
+            <span class="pin-chip">PIN 4829</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+          </div>
+          <h4>1. Create Lobby</h4>
+          <p>The host generates a 4-digit room code in 1 click and displays it on the shared screen.</p>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="timeline-card">
+          <div class="step-badge-circle">02</div>
+          <div class="mini-diagram players-diagram">
+            <div class="avatar-dots">
+              <span class="av-dot av-1"></span>
+              <span class="av-dot av-2"></span>
+              <span class="av-dot av-3"></span>
+            </div>
+            <span class="lobby-label">Lobby Open</span>
+          </div>
+          <h4>2. Players Hop In</h4>
+          <p>Participants join instantly from any phone, laptop, or tablet with their nickname and room PIN.</p>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="timeline-card">
+          <div class="step-badge-circle">03</div>
+          <div class="mini-diagram battle-diagram">
+            <div class="timer-circle-gauge">
+              <svg width="28" height="28" viewBox="0 0 36 36">
+                <circle cx="18" cy="18" r="14" fill="none" stroke="#eadbd5" stroke-width="3"></circle>
+                <circle cx="18" cy="18" r="14" fill="none" stroke="#d98f9f" stroke-width="3" stroke-dasharray="88" stroke-dashoffset="25" stroke-linecap="round"></circle>
+              </svg>
+              <span class="gauge-center-text">15s</span>
+            </div>
+            <span class="lock-label">Speed Multiplier</span>
+          </div>
+          <h4>3. Speed Battle</h4>
+          <p>Questions synchronize across screens. Players race against the decaying timer to score max points.</p>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="timeline-card">
+          <div class="step-badge-circle">04</div>
+          <div class="mini-diagram podium-diagram">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#b66e7d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path></svg>
+            <span class="podium-label">Winner Reveal</span>
+          </div>
+          <h4>4. Podium &amp; Stats</h4>
+          <p>Explanations display for deep learning, followed by the top 3 championship podium ceremony.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- SECTION 4: HOST DECK CONTROLS & SUITE                         -->
+    <!-- ============================================================ -->
+    <section class="deck-control-section">
+      <div class="section-header-block">
+        <span class="section-mini-badge">HOST CAPABILITIES</span>
+        <h2 class="section-heading-title">Complete Question &amp; Deck Control</h2>
+        <p class="section-heading-desc">
+          Author questions manually or let our parser extract them from documents, complete with server-side anti-cheat protection.
+        </p>
+      </div>
+
+      <div class="deck-control-card">
+        <div class="deck-visual-side">
+          <div class="mockup-window">
+            <div class="window-bar">
+              <span class="win-dot dot-r"></span>
+              <span class="win-dot dot-y"></span>
+              <span class="win-dot dot-g"></span>
+              <span class="win-title">Quiz Builder &amp; Import Suite</span>
+            </div>
+            <div class="window-body">
+              <div class="mock-tabs">
+                <span class="mock-tab active-tab">Default Decks</span>
+                <span class="mock-tab">Custom Builder</span>
+                <span class="mock-tab">Document Import</span>
+              </div>
+              <div class="mock-chips-row">
+                <span class="category-chip active-cat">Tech</span>
+                <span class="category-chip">Web Dev</span>
+                <span class="category-chip">General Knowledge</span>
+                <span class="category-chip">Mixed</span>
+              </div>
+              <div class="mock-upload-box">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                <span>Drop PDF, Word, or CSV to auto-parse quiz</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="deck-info-side">
+          <div class="info-tag">BUILT FOR EDUCATORS &amp; HOSTS</div>
+          <h2>Designed for Total Flexibility</h2>
+          <p class="deck-info-desc">Everything you need to orchestrate engaging sessions. Manage questions, fine-tune timers, and keep gameplay fair with host-driven controls designed for zero hassle.</p>
+          <div class="control-bullets">
+            <div class="c-bullet">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+              <div>
+                <b>Custom Round Timing &amp; Explanations</b>
+                <small>Reinforce key concepts. Explanations broadcast simultaneously to hosts and participants when time expires.</small>
+              </div>
+            </div>
+            <div class="c-bullet">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+              <div>
+                <b>Server-Side Anti-Cheat Protection</b>
+                <small>Answer keys never leave the server during active questions, ensuring zero client-side inspection or tampering.</small>
+              </div>
+            </div>
+            <div class="c-bullet">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+              <div>
+                <b>Automated File Ingestion</b>
+                <small>Parse questions directly from Markdown files, Excel/CSV spreadsheets, and PDF or Word documents with ease.</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- SECTION 5: SPACIOUS BOTTOM CTA                                -->
+    <!-- ============================================================ -->
+    <section class="bottom-action-banner">
+      <div class="banner-inner">
+        <span class="banner-badge">✦ GET STARTED IN SECONDS</span>
+        <h2>Ready to launch your first battle?</h2>
+        <p>Gather your group, share a 4-digit PIN, and compete live on any device. Free to play, no account or downloads required.</p>
+        <div class="banner-buttons">
+          <a href="/host.html" class="banner-primary-btn">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"></path></svg>
+            Host a Quiz Room
+          </a>
+          <a href="/player.html" class="banner-secondary-btn">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="12" x2="10" y2="12"></line><line x1="8" y1="10" x2="8" y2="14"></line><line x1="15" y1="13" x2="15.01" y2="13"></line><line x1="18" y1="11" x2="18.01" y2="11"></line><rect x="2" y="6" width="20" height="12" rx="2"></rect></svg>
+            Join with Room PIN
+          </a>
+        </div>
+      </div>
+    </section>
   </main>
+
+  <!-- Clean Minimal Footer -->
+  <footer class="landing-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <span class="brand-sparkle">✦</span>
+        <span>Quiz Arena</span>
+        <span class="footer-divider">•</span>
+        <span class="footer-tagline">Real-Time Multiplayer Platform</span>
+      </div>
+      <div class="footer-nav">
+        <a href="/host.html">Host Dashboard</a>
+        <a href="/player.html">Player Screen</a>
+        <a href="/health">Health API</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Interactive Simulator Script -->
+  <script>
+    (function () {
+      const demoBtns = document.querySelectorAll('.demo-btn');
+      const feedback = document.getElementById('demoFeedback');
+      const scoreLabel = document.getElementById('demoScoreLabel');
+      let score = 0;
+      let answered = false;
+
+      demoBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          if (answered) return;
+          answered = true;
+          const isCorrect = btn.dataset.correct === 'true';
+
+          if (isCorrect) {
+            btn.classList.add('selected-correct');
+            score = 940;
+            scoreLabel.textContent = `Demo Score: +${score} pts`;
+            feedback.innerHTML = `
+              <div class="feedback-correct">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path><path d="m9 12 2 2 4-4"></path></svg>
+                <span>Correct! Speed score: +940 points</span>
+              </div>
+            `;
+          } else {
+            btn.classList.add('selected-wrong');
+            const correctBtn = document.querySelector('.demo-btn[data-correct="true"]');
+            if (correctBtn) correctBtn.classList.add('selected-correct');
+            feedback.innerHTML = `
+              <div class="feedback-wrong">
+                <span>Correct answer was B (backdrop-filter)</span>
+              </div>
+            `;
+          }
+        });
+      });
+    })();
+  </script>
 </body>
 
 </html>

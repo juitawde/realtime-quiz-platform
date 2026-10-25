@@ -426,9 +426,10 @@ async function runTests() {
     assert.strictEqual(joinRes.ok, true);
 
     await new Promise(r => host.emit('quiz:start', { pin: createRes.pin }, r));
+    const qPromise = new Promise(r => player.on('question:start', r));
     host.emit('quiz:ready', { pin: createRes.pin });
 
-    const q = await new Promise(r => player.on('question:start', r));
+    const q = await qPromise;
     assert.strictEqual(q.question, 'What is Node.js runtime based on?');
     assert.strictEqual(q.totalQuestions, 5);
 
@@ -469,13 +470,12 @@ async function runTests() {
     await new Promise(r => hostA.emit('quiz:start', { pin: resA.pin }, r));
     await new Promise(r => hostB.emit('quiz:start', { pin: resB.pin }, r));
 
+    const qPromiseA = new Promise(r => playerA.on('question:start', r));
+    const qPromiseB = new Promise(r => playerB.on('question:start', r));
     hostA.emit('quiz:ready', { pin: resA.pin });
     hostB.emit('quiz:ready', { pin: resB.pin });
 
-    const [qA, qB] = await Promise.all([
-      new Promise(r => playerA.on('question:start', r)),
-      new Promise(r => playerB.on('question:start', r))
-    ]);
+    const [qA, qB] = await Promise.all([qPromiseA, qPromiseB]);
 
     assert.strictEqual(qA.question, 'Question A1?');
     assert.strictEqual(qB.question, 'Question B1?');
