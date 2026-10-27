@@ -1,0 +1,44 @@
+QUIZ ARENA — RESTRICTED FORK AND ATTRIBUTION LICENSE
+Copyright (c) 2026 Jui Tawde. All rights reserved.
+
+IMPORTANT: This is a custom, restrictive license and is not an OSI-approved open-source license.
+
+1. OWNERSHIP
+The Quiz Arena source code, original design, documentation, and other original materials in this repository ("Project") remain the property of the copyright holder, except for third-party components governed by their own licenses. Making this repository public does not transfer ownership.
+
+2. LIMITED PERMISSION TO VIEW AND FORK
+You may view this public repository and create a fork through GitHub, subject to GitHub's terms and the conditions of this license.
+
+3. PERMITTED MODIFICATION OF A FORK
+You may modify the Project only within your own GitHub fork, for personal, educational, or non-commercial purposes, provided that you:
+(a) retain this license and all existing copyright and attribution notices;
+(b) clearly credit Jui Tawde as the original author;
+(c) link to the original repository: https://github.com/juitawde/realtime-quiz-platform;
+(d) identify the changes you made; and
+(e) do not imply that the original author endorses or is responsible for your fork.
+
+4. RESTRICTIONS
+Without prior written permission from the copyright holder, you may not:
+(a) copy or incorporate the Project's source code into a separate repository or project outside the permitted GitHub fork described above;
+(b) redistribute, republish, sublicense, sell, rent, or commercially exploit the Project or substantial portions of it;
+(c) remove or obscure copyright notices, author credits, or this license;
+(d) present the Project, or work derived from it, as your own original work; or
+(e) use the copyright holder's name, branding, or project identity to suggest endorsement.
+
+5. NO AUTOMATIC PERMISSION FOR COMMERCIAL USE OR HOSTING
+This license does not grant permission to commercially use, sell, sublicense, or offer a hosted service based on the Project. Separate written permission is required for those uses.
+
+6. THIRD-PARTY MATERIALS
+Third-party libraries, assets, fonts, and other components may be subject to their own licenses and terms. This license does not replace or override those terms, and the copyright holder does not claim ownership of third-party material.
+
+7. NO WARRANTY
+The Project is provided "as is", to the extent permitted by applicable law, without warranties of any kind. The copyright holder is not liable for claims or damages arising from use of the Project, to the extent permitted by applicable law.
+
+8. PERMISSION REQUESTS
+For permission beyond the limited uses described above, contact the copyright holder through the contact details listed on the original GitHub profile or repository.
+
+9. TERMINATION
+Permission under this license terminates if you materially violate its terms. Upon termination, you must stop the use that is not authorized by this license, subject to applicable law.
+
+NO OTHER RIGHTS ARE GRANTED.
+All rights not expressly granted above are reserved by the copyright holder.
