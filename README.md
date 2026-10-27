@@ -524,9 +524,21 @@ The goal is not only to conduct quizzes but also to preserve each session's resu
 
 **Jui Tawde**  
 B.Tech Computer Science Engineering Student  
-Passionate about building interactive, real-time web applications and learning new technologies.
 
 - **LinkedIn:** [Jui Tawde](https://linkedin.com/in/jui-tawde-788210385/)
+- **Portfolio:** [View Portfolio](https://portfolio-react-mauve-xi.vercel.app/)
+
+---
+
+## License
+
+**Copyright © 2026 Jui Tawde. All rights reserved.**
+
+Quiz Arena is distributed under a custom, restrictive license. Forking and modification are permitted only under the terms of the [LICENSE](./LICENSE) file.
+
+Attribution to the original author and a link to the [original repository](https://github.com/juitawde/realtime-quiz-platform) are required. Commercial use, redistribution outside the permitted fork, and other uses require prior written permission.
+
+This project is not distributed under a standard open-source license.
 
 ---
 
